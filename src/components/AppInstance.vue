@@ -1,0 +1,148 @@
+<template>
+  <div
+    :id="`app-${app.component}`"
+    class="card"
+    style="position: absolute"
+    @click="bringForward()"
+    :class="{ 'd-none': window.minimized, 'border-info': isOnTop }"
+  >
+    <div
+      class="
+        drag-handler
+        card-header
+        user-select-none
+        d-flex
+        justify-content-between
+        align-items-center
+        p-0
+      "
+    >
+      <div class="ps-2">
+        <i class="bi" :class="`bi-${app.icon}`"></i>
+        <span class="ps-2 text-uppercase fw-bold" style="font-size: 0.8em">{{
+          app.title
+        }}</span>
+      </div>
+      <button class="btn btn-sm btn-muted" @click="minimize()">
+        <i class="bi bi-box-arrow-in-down-left"></i>
+      </button>
+    </div>
+    <div class="card-body overflow-auto">
+      <component :is="app.component" :sync="app.sync" :username="username" />
+    </div>
+  </div>
+</template>
+
+<script>
+import * as _ from "lodash";
+import $ from "jquery";
+import "jquery-ui/ui/widgets/draggable";
+import "jquery-ui/ui/widgets/resizable";
+import "jquery-ui/themes/base/draggable.css";
+import "jquery-ui/themes/base/resizable.css";
+
+export default {
+  name: "AppInstance",
+  props: {
+    app: Object,
+    username: String,
+  },
+  data: () => ({
+    window: null,
+    globalIndexZ: 0,
+  }),
+  watch: {
+    window: {
+      handler(newWin) {
+        $(`#app-${this.app.component}`).css({
+          width: newWin.width,
+          height: newWin.height,
+          top: newWin.top,
+          left: newWin.left,
+        });
+
+        this.$emit("activate", !newWin.minimized);
+        if (!newWin.minimized) this.bringForward();
+      },
+      deep: true,
+    },
+  },
+  computed: {
+    isOnTop() {
+      const currentIndexZ = $(`#app-${this.app.component}`).css("zIndex");
+      return Number(currentIndexZ) === Number(this.globalIndexZ);
+    },
+  },
+  created() {
+    this.$eventHub.$on("z-index", (newValue) => (this.globalIndexZ = newValue));
+
+    this.window = this.app.sync.get("window") || {
+      width: this.app.width,
+      height: this.app.height,
+      minWidth: this.app.minWidth || 10,
+      minHeight: this.app.minHeight || 10,
+      top: 0,
+      left: 0,
+      minimized: true,
+    };
+
+    this.$emit("activate", !this.window.minimized);
+
+    $(document).ready(() => {
+      const tp = _.throttle(this.move, 100);
+      $(`#app-${this.app.component}`).draggable({
+        drag: (e, ui) => tp(ui.position),
+        handle: "div.drag-handler",
+      });
+
+      const ts = _.throttle(this.resize, 100);
+      $(`#app-${this.app.component}`).resizable({
+        resize: (e, ui) => ts(ui.size),
+        minWidth: this.app.minWidth,
+        minHeight: this.app.minHeight,
+      });
+
+      this.app.sync.observe((event) => {
+        if (event.keysChanged.has("window")) {
+          this.window = this.app.sync.get("window");
+        }
+      });
+    });
+  },
+  methods: {
+    move(position) {
+      this.window.top = position.top;
+      this.window.left = position.left;
+      this.app.sync.set("window", this.window);
+    },
+    resize(size) {
+      this.window.width = size.width;
+      this.window.height = size.height;
+      this.app.sync.set("window", this.window);
+    },
+    minimize() {
+      this.window.minimized = true;
+      this.app.sync.set("window", this.window);
+    },
+    toggleMinimize() {
+      this.window.minimized = !this.window.minimized;
+      this.app.sync.set("window", this.window);
+    },
+    bringForward() {
+      const currentIndexZ = $(`#app-${this.app.component}`).css("zIndex");
+
+      if (Number(currentIndexZ) !== Number(this.globalIndexZ)) {
+        this.globalIndexZ++;
+        $(`#app-${this.app.component}`).css("zIndex", this.globalIndexZ);
+        this.$eventHub.$emit("z-index", this.globalIndexZ);
+      }
+    },
+  },
+};
+</script>
+
+<style scoped>
+.drag-handler {
+  cursor: grabbing;
+}
+</style>

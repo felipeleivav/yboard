@@ -1,0 +1,38 @@
+[
+  {
+    "component": "TodoApp",
+    "title": "Todo",
+    "icon": "journal-check",
+    "width": 300,
+    "height": 300,
+    "minWidth": 200,
+    "minHeight": 200
+  },
+  {
+    "component": "KanbanApp",
+    "title": "Kanban",
+    "icon": "kanban",
+    "width": 450,
+    "height": 300,
+    "minWidth": 300,
+    "minHeight": 300
+  },
+  {
+    "component": "ChatApp",
+    "title": "Chat",
+    "icon": "chat-text",
+    "width": 450,
+    "height": 250,
+    "minWidth": 200,
+    "minHeight": 250
+  },
+  {
+    "component": "YoutubeApp",
+    "title": "Youtube",
+    "icon": "youtube",
+    "width": 300,
+    "height": 250,
+    "minWidth": 250,
+    "minHeight": 200
+  }
+]
