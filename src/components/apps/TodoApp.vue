@@ -1,7 +1,13 @@
 <template>
   <div class="d-flex flex-column h-100">
     <div class="overflow-auto flex-grow-1">
-      <ul id="todo-list" class="list-group" style="height: 50px" :key="listKey">
+      <draggable
+        tag="ul"
+        class="list-group"
+        animation="200"
+        @change="draggableChange()"
+        v-model="tasks"
+      >
         <li
           v-for="(task, i) in tasks"
           :key="i"
@@ -16,7 +22,7 @@
           />
           <span :class="{ 'task-done': task.done }">{{ task.name }}</span>
         </li>
-      </ul>
+      </draggable>
     </div>
     <button
       v-if="checkedTasks"
@@ -42,19 +48,19 @@
 
 <script>
 import * as _ from "lodash";
-import $ from "jquery";
-import "jquery-ui/ui/widgets/sortable";
-import "jquery-ui/themes/base/sortable.css";
+import draggable from "vuedraggable";
 
 export default {
   name: "TodoApp",
   props: {
     sync: Object,
   },
+  components: {
+    draggable,
+  },
   data: () => ({
     tasks: [],
     newTask: "",
-    listKey: 0,
   }),
   computed: {
     checkedTasks() {
@@ -69,32 +75,10 @@ export default {
         this.tasks = this.sync.get("tasks");
       }
     });
-
-    $(document).ready(() => {
-      this.initSortability();
-    });
   },
   methods: {
-    initSortability() {
-      $("#todo-list").sortable({
-        helper: "clone", // w1
-        update: () => {
-          const list = $("#todo-list").sortable("toArray");
-          const indexes = _.map(list, (t) => Number(_.split(t, "-")[1]));
-          this.tasks = _.map(indexes, (i) => this.tasks[i]);
-          this.sync.set("tasks", this.tasks);
-          this.listKey += 1; // w2
-          this.$nextTick(() => {
-            this.initSortability(); // w3
-          });
-          // this is a workaround(3) for a workaround(2) for another workaround(1)
-          // w1 - with cloned items (helper:clone) we prevent tasks being checked after sorting them
-          // w2 - with helper:clone items were left incorrectly ordered, so we force
-          //      a re-render by updating <ul>'s :key attribute
-          // w3 - re-rendering the whole <ul> removes sortability, so we have to invoke
-          //      sortable() again inside a $nextTick() in order to get the correct :key
-        },
-      });
+    draggableChange() {
+      this.sync.set("tasks", this.tasks);
     },
     addTask() {
       if (this.newTask !== "") {

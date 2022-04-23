@@ -27,12 +27,12 @@
     "minHeight": 250
   },
   {
-    "component": "YoutubeApp",
-    "title": "Youtube",
-    "icon": "youtube",
-    "width": 300,
+    "component": "TimerApp",
+    "title": "Timer",
+    "icon": "stopwatch",
+    "width": 450,
     "height": 250,
-    "minWidth": 250,
-    "minHeight": 200
+    "minWidth": 450,
+    "minHeight": 250
   }
 ]

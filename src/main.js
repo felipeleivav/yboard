@@ -16,11 +16,11 @@ Vue.prototype.$eventHub = new Vue();
 import TodoApp from "@/components/apps/TodoApp";
 import KanbanApp from "@/components/apps/KanbanApp";
 import ChatApp from "@/components/apps/ChatApp";
-import YoutubeApp from "@/components/apps/YoutubeApp";
-Vue.component('TodoApp', TodoApp);
-Vue.component('KanbanApp', KanbanApp);
-Vue.component('ChatApp', ChatApp);
-Vue.component('YoutubeApp', YoutubeApp);
+import TimerApp from "@/components/apps/TimerApp";
+Vue.component("TodoApp", TodoApp);
+Vue.component("KanbanApp", KanbanApp);
+Vue.component("ChatApp", ChatApp);
+Vue.component("TimerApp", TimerApp);
 
 new Vue({
   router,
