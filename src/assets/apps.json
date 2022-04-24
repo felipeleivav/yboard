@@ -30,9 +30,8 @@
     "component": "TimerApp",
     "title": "Timer",
     "icon": "stopwatch",
-    "width": 450,
-    "height": 250,
-    "minWidth": 450,
-    "minHeight": 250
+    "width": 370,
+    "height": 210,
+    "resizable": false
   }
 ]

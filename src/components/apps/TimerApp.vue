@@ -1,6 +1,40 @@
 <template>
   <div class="d-flex flex-column h-100">
-    <div class="overflow-auto flex-grow-1"></div>
+    <div class="overflow-auto flex-grow-1">
+      <div class="card h-100">
+        <div
+          class="
+            card-body
+            d-flex
+            flex-row
+            justify-content-between
+            align-items-center
+            py-2
+            px-3
+          "
+        >
+          <div class="d-flex flex-row align-items-center">
+            <button class="btn btn-primary">
+              <i class="bi bi-play-fill fs-3"></i>
+            </button>
+            <div class="mt-2">
+              <span class="fs-1 fw-bold ps-3">00:00</span>
+              <span class="ps-2">/ 00:00</span>
+            </div>
+          </div>
+        </div>
+        <div
+          class="progress"
+          style="
+            height: 5px;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+          "
+        >
+          <div class="progress-bar" role="progressbar" style="width: 25%"></div>
+        </div>
+      </div>
+    </div>
     <div class="d-flex pt-3 justify-content-between">
       <div class="input-group">
         <span class="input-group-text">
@@ -24,31 +58,7 @@
           placeholder="Mins"
         />
       </div>
-      <div class="dropdown ms-3">
-        <button
-          class="btn btn-dark dropdown-toggle"
-          type="button"
-          data-bs-toggle="dropdown"
-        >
-          <i
-            class="bi pe-1"
-            :class="forWho === 'me' ? 'bi-person-fill' : 'bi-people-fill'"
-          ></i>
-        </button>
-        <ul class="dropdown-menu dropdown-menu-dark">
-          <li>
-            <a class="dropdown-item" role="button" @click="forWho = 'me'">
-              <i class="bi bi-person-fill"></i> Just for me
-            </a>
-          </li>
-          <li>
-            <a class="dropdown-item" role="button" @click="forWho = 'all'">
-              <i class="bi bi-people-fill"></i> For everyone
-            </a>
-          </li>
-        </ul>
-      </div>
-      <button class="btn btn-primary ms-3">Add</button>
+      <button class="btn btn-primary ms-3">Set</button>
     </div>
   </div>
 </template>

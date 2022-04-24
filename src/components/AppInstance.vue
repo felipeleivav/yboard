@@ -84,6 +84,7 @@ export default {
       top: 0,
       left: 0,
       minimized: true,
+      resizable: this.app.resizable !== undefined ? this.app.resizable : true,
     };
 
     this.$emit("activate", !this.window.minimized);
@@ -96,11 +97,13 @@ export default {
       });
 
       const ts = _.throttle(this.resize, 100);
-      $(`#app-${this.app.component}`).resizable({
-        resize: (e, ui) => ts(ui.size),
-        minWidth: this.app.minWidth,
-        minHeight: this.app.minHeight,
-      });
+      if (this.window.resizable) {
+        $(`#app-${this.app.component}`).resizable({
+          resize: (e, ui) => ts(ui.size),
+          minWidth: this.app.minWidth,
+          minHeight: this.app.minHeight,
+        });
+      }
 
       this.app.sync.observe((event) => {
         if (event.keysChanged.has("window")) {
