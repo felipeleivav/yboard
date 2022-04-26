@@ -66,6 +66,7 @@
             kanban-column-tasks
             flex-grow-1
             border-bottom-0
+            overflow-auto
           "
           animation="200"
           group="tasks"
