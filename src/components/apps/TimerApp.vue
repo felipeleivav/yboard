@@ -17,34 +17,34 @@
             <button
               v-if="running"
               class="btn btn-primary"
-              @click="pauseTimer()"
+              @click="pauseTimerSync()"
             >
-              <i class="bi bi-pause-fill fs-3"></i>
+              <i class="bi bi-pause-fill"></i>
             </button>
             <button
               v-if="!running"
               class="btn btn-primary"
-              @click="startTimer()"
+              @click="startTimerSync()"
             >
               <i class="bi bi-play-fill fs-3"></i>
             </button>
             <div class="mt-2 user-select-none">
-              <span class="fs-1 fw-bold ps-3">{{
+              <span class="fw-bold ps-3" style="font-size: 2em">{{
                 remainingSeconds | toMmss
               }}</span>
               <span class="ps-2">/ {{ total | toMmss }}</span>
             </div>
           </div>
           <div class="mt-2">
-            <i v-if="isDone" class="bi bi-check-all text-success"></i>
-            <i v-if="isPaused" class="bi bi-pause text-danger blink"></i>
+            <i v-if="isDone" class="bi bi-check-all text-success fs-4"></i>
+            <i v-if="isPaused" class="bi bi-pause text-danger blink fs-4"></i>
             <i
               v-if="onBreak"
-              class="bi bi-moon-stars-fill text-warning ps-2"
+              class="bi bi-moon-stars-fill text-warning ps-2 fs-4"
             ></i>
             <i
               v-if="repeatable"
-              class="bi bi-arrow-repeat text-primary ps-2"
+              class="bi bi-arrow-repeat text-primary ps-2 fs-4"
             ></i>
           </div>
         </div>
@@ -81,6 +81,7 @@
           placeholder="Mins"
           v-model="timerMins"
           @keypress="numberFilter"
+          @keyup.enter="setTimer()"
         />
         <div class="input-group-text" @click="repeat = !repeat">
           <i class="bi bi-arrow-repeat"></i>
@@ -88,6 +89,7 @@
             class="form-check-input ms-2 mt-0"
             type="checkbox"
             v-model="repeat"
+            @keyup.enter="setTimer()"
           />
         </div>
         <div class="input-group-text">
@@ -100,6 +102,7 @@
           placeholder="Mins"
           v-model="breakMins"
           @keypress="numberFilter"
+          @keyup.enter="setTimer()"
         />
       </div>
       <button class="btn btn-primary ms-3" @click="setTimer()">Set</button>
@@ -114,6 +117,10 @@ import NumberFilterMixin from "@/mixins/number-filter.mixin";
 export default {
   name: "TimerApp",
   mixins: [NumberFilterMixin],
+  props: {
+    sync: Object,
+    username: String,
+  },
   filters: {
     toMmss(time) {
       const p = (v) => _.padStart(v, 2, "0");
@@ -134,6 +141,7 @@ export default {
     running: false,
     start: null,
     pause: null,
+    break: 0,
     total: 0,
     delta: 0,
     interval: null,
@@ -160,7 +168,13 @@ export default {
   created() {
     this.alert = new Audio(require("@/assets/alert.wav"));
 
-    this.timer = this.sync.get("timer");
+    this.setTimerState(this.sync.get("timer"), true);
+
+    this.sync.observe((event) => {
+      if (event.keysChanged.has("timer")) {
+        this.setTimerState(this.sync.get("timer"));
+      }
+    });
   },
   methods: {
     setTimer() {
@@ -170,9 +184,11 @@ export default {
         this.running = false;
         this.start = null;
         this.pause = null;
+        this.break = this.breakMins;
         this.total = this.timerMins * 60;
         this.delta = 0;
         clearInterval(this.interval);
+        this.sync.set("timer", this.getTimerState());
       }
     },
     startTimer() {
@@ -182,8 +198,9 @@ export default {
         this.start =
           this.start === null
             ? Date.now()
-            : this.start + (Date.now() - this.pause);
+            : this.start + (this.pause ? Date.now() - this.pause : 0); // [1]
 
+        clearInterval(this.interval);
         this.interval = setInterval(() => {
           this.delta = Math.floor((Date.now() - this.start) / 1000);
 
@@ -197,8 +214,10 @@ export default {
 
             if (this.repeatable) {
               this.delta = 0;
-              this.total = this.breakMins * 60;
-              this.onBreak = !this.onBreak;
+              if (this.break > 0) {
+                this.total = this.break * 60;
+                this.onBreak = !this.onBreak;
+              }
               this.startTimer();
             }
           }
@@ -209,6 +228,50 @@ export default {
       this.running = false;
       this.pause = Date.now();
       clearInterval(this.interval);
+    },
+    startTimerSync() {
+      this.startTimer();
+      this.sync.set("timer", this.getTimerState());
+    },
+    pauseTimerSync() {
+      this.pauseTimer();
+      this.sync.set("timer", this.getTimerState());
+    },
+    getTimerState() {
+      const ms = (d) => (d ? Date.now() - d : null);
+
+      return {
+        repeatable: this.repeatable,
+        onBreak: this.onBreak,
+        running: this.running,
+        msSinceStart: ms(this.start),
+        msSincePause: ms(this.pause),
+        break: this.break,
+        total: this.total,
+        delta: this.delta,
+        username: this.username,
+      };
+    },
+    setTimerState(timer, force = false) {
+      if (!timer || (this.username === timer.username && !force)) return;
+
+      this.repeatable = timer.repeatable;
+      this.onBreak = timer.onBreak;
+      this.running = timer.running;
+      this.pause = timer.msSincePause ? Date.now() - timer.msSincePause : null;
+      this.start = timer.msSinceStart
+        ? Date.now() -
+          timer.msSinceStart -
+          (this.pause ? Date.now() - this.pause : 0) // workaround to prevent sum pause twice on [1]
+        : null;
+      this.break = timer.break;
+      this.total = timer.total;
+      this.delta = timer.delta;
+      if (timer.running) {
+        this.startTimer();
+      } else {
+        clearInterval(this.interval);
+      }
     },
   },
 };
