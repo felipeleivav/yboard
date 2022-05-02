@@ -167,7 +167,6 @@ export default {
     editItem: false,
     deleteItem: false,
     discardDeleteTimeout: null,
-    colKey: 0,
   }),
   created() {
     this.kanbanColumns = this.sync.get("columns") || [];

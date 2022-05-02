@@ -17,10 +17,12 @@ import TodoApp from "@/components/apps/TodoApp";
 import KanbanApp from "@/components/apps/KanbanApp";
 import ChatApp from "@/components/apps/ChatApp";
 import TimerApp from "@/components/apps/TimerApp";
+import LinksApp from "@/components/apps/LinksApp";
 Vue.component("TodoApp", TodoApp);
 Vue.component("KanbanApp", KanbanApp);
 Vue.component("ChatApp", ChatApp);
 Vue.component("TimerApp", TimerApp);
+Vue.component("LinksApp", LinksApp);
 
 new Vue({
   router,

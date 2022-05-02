@@ -1,5 +1,12 @@
 [
   {
+    "component": "LinksApp",
+    "title": "Links",
+    "icon": "bookmarks",
+    "width": 350,
+    "height": 300
+  },
+  {
     "component": "TodoApp",
     "title": "Todo",
     "icon": "journal-check",

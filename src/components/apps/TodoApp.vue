@@ -52,11 +52,11 @@ import draggable from "vuedraggable";
 
 export default {
   name: "TodoApp",
-  props: {
-    sync: Object,
-  },
   components: {
     draggable,
+  },
+  props: {
+    sync: Object,
   },
   data: () => ({
     tasks: [],
