@@ -123,6 +123,9 @@ export default {
       this.yjs.stopAwareness();
     };
   },
+  beforeDestroy() {
+    if (this.yjs) this.yjs.stopAwareness();
+  },
   methods: {
     toggleActiveApp(active, app) {
       app.active = active;

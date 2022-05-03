@@ -219,6 +219,10 @@ export default {
                 this.onBreak = !this.onBreak;
               }
               this.startTimer();
+
+              this.sync.set("timer", this.getTimerState());
+            } else {
+              this.sync.set("timer", this.getTimerState());
             }
           }
         }, 100);
@@ -258,7 +262,8 @@ export default {
       this.repeatable = timer.repeatable;
       this.onBreak = timer.onBreak;
       this.running = timer.running;
-      this.pause = timer.msSincePause ? Date.now() - timer.msSincePause : null;
+      this.pause =
+        timer.msSincePause !== null ? Date.now() - timer.msSincePause : null;
       this.start = timer.msSinceStart
         ? Date.now() -
           timer.msSinceStart -
