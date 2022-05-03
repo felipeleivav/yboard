@@ -181,7 +181,6 @@ export default {
     draggableChange() {
       this.editItem = false;
       this.deleteItem = false;
-
       this.sync.set("columns", this.kanbanColumns);
     },
     addColumn() {
@@ -189,33 +188,23 @@ export default {
       this.sync.set("columns", this.kanbanColumns);
 
       this.editItem = this.kanbanColumns.length - 1;
-
-      this.$nextTick(() => {
-        this.$el.querySelector(`#kanban-input-${this.editItem}`).focus();
-      });
+      this.focusOnEdit();
     },
     addTaskToColumn(column, i) {
       column.tasks.push({ name: "" });
       this.sync.set("columns", this.kanbanColumns);
 
       this.editItem = `${i}-${column.tasks.length - 1}`;
-
-      this.$nextTick(() => {
-        this.$el.querySelector(`#kanban-input-${this.editItem}`).focus();
-      });
+      this.focusOnEdit();
     },
     editAnItem(columnTask) {
       this.editItem = columnTask;
-
-      this.$nextTick(() => {
-        this.$el.querySelector(`#kanban-input-${this.editItem}`).focus();
-      });
+      this.focusOnEdit();
     },
     deleteAColumn(i) {
       if (this.deleteItem === i) {
         this.kanbanColumns.splice(i, 1);
         this.sync.set("columns", this.kanbanColumns);
-
         this.deleteItem = false;
       } else {
         this.deleteItem = i;
@@ -226,7 +215,6 @@ export default {
       if (this.deleteItem === `${i}-${j}`) {
         this.kanbanColumns[i].tasks.splice(j, 1);
         this.sync.set("columns", this.kanbanColumns);
-
         this.deleteItem = false;
       } else {
         this.deleteItem = `${i}-${j}`;
@@ -238,6 +226,11 @@ export default {
       this.discardDeleteTimeout = setTimeout(() => {
         this.deleteItem = false;
       }, 5000);
+    },
+    focusOnEdit() {
+      this.$nextTick(() => {
+        this.$el.querySelector(`#kanban-input-${this.editItem}`).focus();
+      });
     },
     changedItem() {
       this.sync.set("columns", this.kanbanColumns);

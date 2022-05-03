@@ -1,7 +1,11 @@
 <template>
   <div class="d-flex flex-column h-100">
     <div class="overflow-auto flex-grow-1">
-      <draggable animation="200" v-model="linkFolders">
+      <draggable
+        animation="200"
+        @change="draggableChange()"
+        v-model="linkFolders"
+      >
         <div
           v-for="(folder, i) in linkFolders"
           :key="i"
@@ -12,7 +16,10 @@
             @mouseleave="folderHover = false"
             class="d-flex flex-row justify-content-between clickable mt-1"
             :class="{ 'pb-2': folder.open }"
-            @click="folder.open = !folder.open"
+            @click="
+              folder.open = !folder.open;
+              changedItem();
+            "
           >
             <div class="d-flex flex-row align-items-center">
               <i
@@ -60,9 +67,10 @@
           </div>
           <draggable
             tag="ul"
-            class="list-group"
+            class="list-group position-relative"
             animation="200"
             group="links"
+            @change="draggableChange()"
             v-model="folder.links"
             v-show="folder.open"
           >
@@ -78,7 +86,7 @@
               "
               @mouseover="linkHover = `${i}-${j}`"
               @mouseleave="linkHover = false"
-              @click="openLink(link.link)"
+              @click="openLink(link.url)"
             >
               <div class="flex-grow-1" style="min-width: 0">
                 <div v-show="editItem !== `${i}-${j}`" class="text-truncate">
@@ -104,14 +112,14 @@
                 <div class="d-flex flex-row" style="font-size: 0.8em">
                   <div class="text-truncate" v-show="editItem !== `${i}-${j}`">
                     <a
-                      v-show="link.link"
-                      :href="link.link"
+                      v-show="link.url"
+                      :href="link.url"
                       target="_blank"
                       @click.prevent
                     >
-                      {{ link.link }}
+                      {{ link.url }}
                     </a>
-                    <span v-show="!link.link" class="text-muted fst-italic">
+                    <span v-show="!link.url" class="text-muted fst-italic">
                       empty
                     </span>
                   </div>
@@ -126,7 +134,7 @@
                     @keyup.esc="editItem = false"
                     @change="changedItem()"
                     @click.stop
-                    v-model="link.link"
+                    v-model="link.url"
                   />
                 </div>
               </div>
@@ -162,16 +170,44 @@
                 text-muted text-uppercase
               "
               style="font-size: 0.8em"
+              @mouseover="addLinkHover = i"
+              @mouseleave="addLinkHover = false"
             >
               Empty
             </li>
-            <div v-if="linkHover === `${i}-${folder.links.length - 1}`">
-              wow
+            <div
+              v-if="
+                (linkHover && linkHover.startsWith(`${i}-`)) ||
+                addLinkHover === i
+              "
+              class="
+                position-absolute
+                w-100
+                d-flex
+                justify-content-center
+                text-primary
+              "
+              style="bottom: -20px; font-size: 0.8em"
+              @mouseover="addLinkHover = i"
+              @mouseleave="addLinkHover = false"
+            >
+              <div
+                class="
+                  border-top-0 border border-muted
+                  rounded-bottom
+                  px-3
+                  clickable
+                "
+                @click="addLink(i)"
+              >
+                <i class="bi bi-bookmark-plus"></i> Add link
+              </div>
             </div>
           </draggable>
         </div>
       </draggable>
-      <div :class="{ 'pt-3': linkFolders.length > 0 }">
+      <div>
+        <hr v-if="linkFolders.length > 0" class="text-muted" />
         <button
           class="
             btn btn-sm btn-light
@@ -183,7 +219,7 @@
           style="border-color: #ddd"
           @click="addFolder()"
         >
-          <i class="bi bi-folder-plus"></i>
+          <i class="bi bi-plus-circle"></i>
           <span v-show="linkFolders.length === 0">Add new folder</span>
         </button>
       </div>
@@ -203,78 +239,58 @@ export default {
     sync: Object,
   },
   data: () => ({
-    linkFolders: [
-      {
-        open: true,
-        name: "default",
-        links: [
-          {
-            title: "Dropdowns en bootstrap",
-            link: "https://getbootstrap.com/docs/5.1/components/dropdowns/",
-          },
-          {
-            title: "Ubuntu 22 descargar",
-            link: "https://www.omgubuntu.co.uk/2022/04/ubuntu-22-04-lts-is-now-available-to-download",
-          },
-          {
-            title: "Curso COBOL",
-            link: "https://github.com/openmainframeproject/cobol-programming-course",
-          },
-        ],
-      },
-      {
-        open: true,
-        name: "otra cat",
-        links: [
-          {
-            title: "Dropdowns en bootstrap 2",
-            link: "https://getbootstrap.com/docs/5.1/components/dropdowns/",
-          },
-        ],
-      },
-      {
-        open: true,
-        name: "folder vacia",
-        links: [],
-      },
-    ],
+    linkFolders: [],
     linkHover: false,
     folderHover: false,
+    addLinkHover: false,
     editItem: false,
     deleteItem: false,
     discardDeleteTimeout: null,
   }),
+  created() {
+    this.linkFolders = this.sync.get("folders") || [];
+
+    this.sync.observe((event) => {
+      if (event.keysChanged.has("folders")) {
+        this.linkFolders = this.sync.get("folders");
+      }
+    });
+  },
   methods: {
-    openLink(link) {
-      window.open(link);
+    draggableChange() {
+      this.editItem = false;
+      this.deleteItem = false;
+      this.sync.set("folders", this.linkFolders);
+    },
+    openLink(url) {
+      if (url) window.open(url);
     },
     addFolder() {
       this.linkFolders.push({ open: true, name: "", links: [] });
+      this.sync.set("folders", this.linkFolders);
 
       this.editItem = this.linkFolders.length - 1;
+      this.focusOnEdit();
+    },
+    addLink(i) {
+      this.linkFolders[i].links.push({ title: "", url: "" });
+      this.sync.set("folders", this.linkFolders);
 
-      this.$nextTick(() => {
-        this.$el.querySelector(`#links-folder-input-${this.editItem}`).focus();
-      });
+      this.editItem = `${i}-${this.linkFolders[i].links.length - 1}`;
+      this.focusOnEdit();
     },
     editFolder(i) {
       this.editItem = i;
-
-      this.$nextTick(() => {
-        this.$el.querySelector(`#links-folder-input-${this.editItem}`).focus();
-      });
+      this.focusOnEdit();
     },
-    editLink(j) {
-      this.editItem = j;
-
-      this.$nextTick(() => {
-        this.$el.querySelector(`#links-folder-input-${this.editItem}`).focus();
-      });
+    editLink(ij) {
+      this.editItem = ij;
+      this.focusOnEdit();
     },
     deleteFolder(i) {
       if (this.deleteItem === i) {
         this.linkFolders.splice(i, 1);
-
+        this.sync.set("folders", this.linkFolders);
         this.deleteItem = false;
       } else {
         this.deleteItem = i;
@@ -284,7 +300,7 @@ export default {
     deleteLink(i, j) {
       if (this.deleteItem === `${i}-${j}`) {
         this.linkFolders[i].links.splice(j, 1);
-
+        this.sync.set("folders", this.linkFolders);
         this.deleteItem = false;
       } else {
         this.deleteItem = `${i}-${j}`;
@@ -297,7 +313,14 @@ export default {
         this.deleteItem = false;
       }, 5000);
     },
-    changedItem() {},
+    focusOnEdit() {
+      this.$nextTick(() => {
+        this.$el.querySelector(`#links-folder-input-${this.editItem}`).focus();
+      });
+    },
+    changedItem() {
+      this.sync.set("folders", this.linkFolders);
+    },
   },
 };
 </script>
