@@ -4,7 +4,7 @@
     class="card"
     style="position: absolute"
     @click="bringForward()"
-    :class="{ 'd-none': window.minimized, 'border-info': isOnTop }"
+    :class="{ 'd-none': window.minimized, 'border-primary': isOnTop }"
   >
     <div
       class="

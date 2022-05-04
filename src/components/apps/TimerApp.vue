@@ -19,7 +19,7 @@
               class="btn btn-primary"
               @click="pauseTimerSync()"
             >
-              <i class="bi bi-pause-fill"></i>
+              <i class="bi bi-pause-fill fs-3"></i>
             </button>
             <button
               v-if="!running"

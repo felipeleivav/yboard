@@ -5,13 +5,53 @@
       <div class="pt-3"><p class="text-white">Connecting to room...</p></div>
     </div>
 
+    <div class="titlebar-container d-flex flex-column">
+      <div class="d-flex">
+        <button class="btn btn-sm btn-dark fw-bold me-3">YB</button>
+        <div class="vr" />
+        <button
+          v-show="!editTitle"
+          class="btn btn-sm btn-muted font-monospace"
+          @mouseover="showEditTitle = true"
+          @mouseleave="showEditTitle = false"
+          @click="
+            editTitle = true;
+            $nextTick(() => $el.querySelector('#room-title-input').focus());
+          "
+        >
+          {{ roomDescription }}
+          <i
+            v-show="showEditTitle"
+            class="bi bi-pencil ms-2"
+            style="font-size: 0.8em"
+          ></i>
+        </button>
+        <input
+          id="room-title-input"
+          v-show="editTitle"
+          type="text"
+          class="form-control form-control-sm font-monospace"
+          placeholder="Room's description"
+          v-model="roomDescription"
+          @blur="editTitle = false"
+          @keyup.enter="editTitle = false"
+          @keyup.esc="editTitle = false"
+        />
+      </div>
+      <div class="pt-3">
+        <button class="btn btn-sm btn-light border" style="font-size: 0.8em">
+          <i class="bi bi-sliders"></i>
+        </button>
+      </div>
+    </div>
+
     <div class="toolbar-container">
       <div class="btn-group-vertical bg-light">
         <button
           v-for="(app, i) in apps"
           :key="i"
           type="button"
-          class="btn btn-outline-secondary app-button"
+          class="btn btn-outline-primary app-button"
           :class="{ active: app.active }"
           @click="toggleMinimize(app)"
         >
@@ -75,6 +115,9 @@ export default {
     yjs: null,
     username: null,
     users: [],
+    showEditTitle: false,
+    editTitle: false,
+    roomDescription: "Workspace description",
   }),
   created() {
     const roomId = this.$route.params.roomId;
@@ -143,9 +186,16 @@ export default {
   background: aliceblue;
 }
 
-.toolbar-container {
+.titlebar-container {
   position: absolute;
   z-index: 99999;
+  top: 10px;
+  left: 25px;
+}
+
+.toolbar-container {
+  position: absolute;
+  z-index: 99998;
   display: flex;
   align-items: center;
   left: 10px;

@@ -4,7 +4,9 @@
     "title": "Links",
     "icon": "bookmarks",
     "width": 350,
-    "height": 300
+    "height": 300,
+    "minWidth": 200,
+    "minHeight": 200
   },
   {
     "component": "TodoApp",

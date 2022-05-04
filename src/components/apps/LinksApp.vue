@@ -170,39 +170,9 @@
                 text-muted text-uppercase
               "
               style="font-size: 0.8em"
-              @mouseover="addLinkHover = i"
-              @mouseleave="addLinkHover = false"
             >
               Empty
             </li>
-            <div
-              v-if="
-                (linkHover && linkHover.startsWith(`${i}-`)) ||
-                addLinkHover === i
-              "
-              class="
-                position-absolute
-                w-100
-                d-flex
-                justify-content-center
-                text-primary
-              "
-              style="bottom: -20px; font-size: 0.8em"
-              @mouseover="addLinkHover = i"
-              @mouseleave="addLinkHover = false"
-            >
-              <div
-                class="
-                  border-top-0 border border-muted
-                  rounded-bottom
-                  px-3
-                  clickable
-                "
-                @click="addLink(i)"
-              >
-                <i class="bi bi-bookmark-plus"></i> Add link
-              </div>
-            </div>
           </draggable>
         </div>
       </draggable>
@@ -219,8 +189,10 @@
           style="border-color: #ddd"
           @click="addFolder()"
         >
-          <i class="bi bi-plus-circle"></i>
-          <span v-show="linkFolders.length === 0">Add new folder</span>
+          <i class="bi bi-plus-circle w-100"></i>
+          <span class="w-100" v-show="linkFolders.length === 0">
+            Add new folder
+          </span>
         </button>
       </div>
     </div>
@@ -242,7 +214,6 @@ export default {
     linkFolders: [],
     linkHover: false,
     folderHover: false,
-    addLinkHover: false,
     editItem: false,
     deleteItem: false,
     discardDeleteTimeout: null,

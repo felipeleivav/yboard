@@ -142,8 +142,10 @@
         style="border-color: #ddd"
         @click="addColumn()"
       >
-        <i class="bi bi-plus-circle"></i>
-        <span v-show="kanbanColumns.length === 0">Add new column</span>
+        <i class="bi bi-plus-circle w-100"></i>
+        <span class="w-100" v-show="kanbanColumns.length === 0">
+          Add new column
+        </span>
       </button>
     </div>
   </div>
