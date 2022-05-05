@@ -15,7 +15,6 @@
             @mouseover="folderHover = i"
             @mouseleave="folderHover = false"
             class="d-flex flex-row justify-content-between clickable"
-            :class="{ 'pb-2': folder.open, 'mt-2': i > 0 }"
             @click="
               folder.open = !folder.open;
               changedItem();
