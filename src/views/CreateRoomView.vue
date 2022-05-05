@@ -45,12 +45,12 @@ export default {
   }),
   computed: {
     invalidUsername() {
-      return !_.isEmpty(this.username) && !/^[A-Za-z0-9]+$/.test(this.username);
+      return !/^[A-Za-z0-9]+$/.test(this.username);
     },
   },
   methods: {
     createRoom() {
-      if (!this.invalidUsername) {
+      if (!this.invalidUsername && !_.isEmpty(this.username)) {
         const roomId = this.idGenerator();
         localStorage.setItem(roomId, this.username);
         this.$router.push(`/room/${roomId}`);

@@ -4,7 +4,7 @@
     class="card"
     style="position: absolute"
     @click="bringForward()"
-    :class="{ 'd-none': window.minimized, 'border-primary': isOnTop }"
+    :class="{ 'd-none': window.minimized, 'border-info': isOnTop }"
   >
     <div
       class="
@@ -23,12 +23,28 @@
           app.title
         }}</span>
       </div>
-      <button class="btn btn-sm btn-muted" @click="minimize()">
-        <i class="bi bi-box-arrow-in-down-left"></i>
-      </button>
+      <div class="d-flex">
+        <button
+          v-for="(button, i) in headerButtons"
+          :key="i"
+          class="btn btn-sm btn-muted"
+          @click="button.callback"
+        >
+          <i :class="`bi bi-${button.icon}`"></i>
+        </button>
+        <div v-if="headerButtons.length > 0" class="vr my-2" />
+        <button class="btn btn-sm btn-muted" @click="minimize()">
+          <i class="bi bi-box-arrow-in-down-left"></i>
+        </button>
+      </div>
     </div>
     <div class="card-body overflow-auto">
-      <component :is="app.component" :sync="app.sync" :username="username" />
+      <component
+        :is="app.component"
+        :sync="app.sync"
+        :username="username"
+        @setHeaderButtons="headerButtons = $event"
+      />
     </div>
   </div>
 </template>
@@ -50,6 +66,7 @@ export default {
   data: () => ({
     window: null,
     globalIndexZ: 0,
+    headerButtons: [],
   }),
   watch: {
     window: {
@@ -81,8 +98,8 @@ export default {
       height: this.app.height,
       minWidth: this.app.minWidth || 10,
       minHeight: this.app.minHeight || 10,
-      top: 0,
-      left: 0,
+      top: 68,
+      left: 87,
       minimized: true,
       resizable: this.app.resizable !== undefined ? this.app.resizable : true,
     };

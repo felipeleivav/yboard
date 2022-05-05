@@ -14,22 +14,28 @@
           <div
             @mouseover="folderHover = i"
             @mouseleave="folderHover = false"
-            class="d-flex flex-row justify-content-between clickable mt-1"
-            :class="{ 'pb-2': folder.open }"
+            class="d-flex flex-row justify-content-between clickable"
+            :class="{ 'pb-2': folder.open, 'mt-2': i > 0 }"
             @click="
               folder.open = !folder.open;
               changedItem();
             "
           >
-            <div class="d-flex flex-row align-items-center">
+            <div class="d-flex flex-row align-items-center my-2">
               <i
                 class="bi pe-2"
                 :class="folder.open ? 'bi-folder' : 'bi-folder-symlink'"
               ></i>
-              <div v-show="editItem !== i">
+              <div class="d-flex align-items-center" v-if="editItem !== i">
                 <span v-show="folder.name">{{ folder.name }}</span>
                 <span v-show="!folder.name" class="text-muted fst-italic">
                   empty
+                </span>
+                <span
+                  class="badge rounded-circle bg-primary ms-2"
+                  v-show="folderHover === i"
+                >
+                  {{ folder.links.length }}
                 </span>
               </div>
               <input
@@ -48,8 +54,15 @@
             </div>
             <div
               v-if="folderHover === i || editItem === i || deleteItem === i"
-              class="pe-1"
+              class="pe-1 d-flex align-items-center"
             >
+              <button
+                class="btn btn-sm btn-muted py-0 px-1 rounded-circle"
+                @click.stop="addLink(i)"
+              >
+                <i class="bi bi-bookmark-plus"></i>
+              </button>
+              <div class="vr my-2" />
               <button
                 class="btn btn-sm btn-muted py-0 px-1 rounded-circle"
                 @click.stop="editFolder(i)"
@@ -73,6 +86,7 @@
             @change="draggableChange()"
             v-model="folder.links"
             v-show="folder.open"
+            style="border-bottom-left-radius: 0; border-bottom-right-radius: 0"
           >
             <li
               v-for="(link, j) in folder.links"
@@ -129,7 +143,6 @@
                     type="text"
                     class="form-control form-control-sm mt-3"
                     placeholder="URL"
-                    @blur="editItem = false"
                     @keyup.enter="editItem = false"
                     @keyup.esc="editItem = false"
                     @change="changedItem()"
@@ -168,15 +181,31 @@
                 pt-3
                 pb-3
                 text-muted text-uppercase
+                user-select-none
               "
               style="font-size: 0.8em"
             >
               Empty
             </li>
           </draggable>
+          <!-- <ul class="list-group" v-if="folder.open">
+            <li class="list-group-item p-0 border-0">
+              <button
+                class="btn btn-sm btn-light w-100 p-0 border-top-0"
+                style="
+                  border-color: #ddd;
+                  border-top-left-radius: 0;
+                  border-top-right-radius: 0;
+                "
+                @click="addLink(i)"
+              >
+                <i class="bi bi-plus w-100"></i>
+              </button>
+            </li>
+          </ul> -->
         </div>
       </draggable>
-      <div>
+      <!-- <div>
         <hr v-if="linkFolders.length > 0" class="text-muted" />
         <button
           class="
@@ -194,7 +223,7 @@
             Add new folder
           </span>
         </button>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -219,13 +248,26 @@ export default {
     discardDeleteTimeout: null,
   }),
   created() {
-    this.linkFolders = this.sync.get("folders") || [];
+    this.linkFolders = this.sync.get("folders") || [
+      {
+        open: true,
+        name: "Main folder",
+        links: [],
+      },
+    ];
 
     this.sync.observe((event) => {
       if (event.keysChanged.has("folders")) {
         this.linkFolders = this.sync.get("folders");
       }
     });
+
+    this.$emit("setHeaderButtons", [
+      {
+        icon: "folder-plus",
+        callback: this.addFolder,
+      },
+    ]);
   },
   methods: {
     draggableChange() {

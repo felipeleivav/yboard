@@ -19,7 +19,7 @@
             $nextTick(() => $el.querySelector('#room-title-input').focus());
           "
         >
-          {{ roomDescription }}
+          {{ roomDesc }}
           <i
             v-show="showEditTitle"
             class="bi bi-pencil ms-2"
@@ -32,12 +32,17 @@
           type="text"
           class="form-control form-control-sm font-monospace"
           placeholder="Room's description"
-          v-model="roomDescription"
+          v-model="roomDesc"
           @blur="editTitle = false"
           @keyup.enter="editTitle = false"
           @keyup.esc="editTitle = false"
+          size="100"
+          style="width: 400px"
         />
       </div>
+    </div>
+
+    <div class="settings-button-container">
       <div class="pt-3">
         <button class="btn btn-sm btn-light border" style="font-size: 0.8em">
           <i class="bi bi-sliders"></i>
@@ -46,13 +51,13 @@
     </div>
 
     <div class="toolbar-container">
-      <div class="btn-group-vertical bg-light">
+      <div class="btn-group-vertical border">
         <button
           v-for="(app, i) in apps"
           :key="i"
           type="button"
-          class="btn btn-outline-primary app-button"
-          :class="{ active: app.active }"
+          class="btn app-button border-0"
+          :class="{ 'btn-dark': app.active, 'btn-secondary': !app.active }"
           @click="toggleMinimize(app)"
         >
           <i class="bi" :class="`bi-${app.icon} w-100`"></i>
@@ -115,10 +120,16 @@ export default {
     yjs: null,
     username: null,
     users: [],
+    roomSync: null,
     showEditTitle: false,
     editTitle: false,
-    roomDescription: "Workspace description",
+    roomDesc: null,
   }),
+  watch: {
+    roomDesc(newVal) {
+      this.roomSync.set("description", newVal);
+    },
+  },
   created() {
     const roomId = this.$route.params.roomId;
     this.username = localStorage.getItem(roomId);
@@ -139,6 +150,16 @@ export default {
           window: {},
           active: false,
         }));
+
+        this.roomSync = doc.getMap("roomConfig");
+        this.roomDesc =
+          this.roomSync.get("description") || "Room's description";
+
+        this.roomSync.observe((event) => {
+          if (event.keysChanged.has("description")) {
+            this.roomDesc = this.roomSync.get("description");
+          }
+        });
       })
       .catch(() => this.$router.push(`/error/${roomId}`));
 
@@ -193,9 +214,16 @@ export default {
   left: 25px;
 }
 
-.toolbar-container {
+.settings-button-container {
   position: absolute;
   z-index: 99998;
+  top: 40px;
+  left: 25px;
+}
+
+.toolbar-container {
+  position: absolute;
+  z-index: 99997;
   display: flex;
   align-items: center;
   left: 10px;
