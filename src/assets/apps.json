@@ -5,8 +5,8 @@
     "icon": "bookmarks",
     "width": 350,
     "height": 300,
-    "minWidth": 200,
-    "minHeight": 200
+    "minWidth": 300,
+    "minHeight": 300
   },
   {
     "component": "TodoApp",

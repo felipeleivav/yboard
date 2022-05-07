@@ -24,24 +24,18 @@
         </li>
       </draggable>
     </div>
-    <button
-      v-if="checkedTasks"
-      type="button"
-      class="btn btn-link btn-sm m-0 p-0"
-      @click="clearDoneTasks()"
-    >
-      Clear finished
-    </button>
     <div class="d-flex pt-3">
-      <input
-        type="text"
-        class="form-control"
-        v-model="newTask"
-        maxlength="50"
-        placeholder="Enter task name..."
-        @keyup.enter="addTask()"
-      />
-      <button class="btn btn-primary ms-3" @click="addTask()">Add</button>
+      <div class="input-group">
+        <input
+          type="text"
+          class="form-control"
+          v-model="newTask"
+          maxlength="50"
+          placeholder="Enter task name..."
+          @keyup.enter="addTask()"
+        />
+        <button class="btn btn-primary" @click="addTask()">Add</button>
+      </div>
     </div>
   </div>
 </template>
@@ -65,6 +59,14 @@ export default {
   computed: {
     checkedTasks() {
       return _.some(this.tasks, { done: true });
+    },
+  },
+  watch: {
+    checkedTasks(newVal) {
+      const iconBtn = newVal
+        ? [{ icon: "trash-fill", callback: this.clearDoneTasks }]
+        : [];
+      this.$emit("setHeaderButtons", iconBtn);
     },
   },
   created() {

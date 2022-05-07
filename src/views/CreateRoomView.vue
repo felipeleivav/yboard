@@ -62,6 +62,6 @@ export default {
 
 <style scoped>
 .custom-bg {
-  background-color: aliceblue;
+  background-color: azure;
 }
 </style>

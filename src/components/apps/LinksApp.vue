@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex flex-column h-100">
-    <div class="overflow-auto flex-grow-1">
+    <div class="overflow-auto flex-grow-1" style="margin-top: -10px">
       <draggable
         animation="200"
         @change="draggableChange()"
@@ -20,26 +20,23 @@
               changedItem();
             "
           >
-            <div class="d-flex flex-row align-items-center my-2">
+            <div
+              class="d-flex flex-row my-2 align-items-center"
+              style="min-width: 0"
+            >
               <i
                 class="bi pe-2"
                 :class="folder.open ? 'bi-folder' : 'bi-folder-symlink'"
               ></i>
-              <div class="d-flex align-items-center" v-if="editItem !== i">
-                <span v-show="folder.name">{{ folder.name }}</span>
-                <span v-show="!folder.name" class="text-muted fst-italic">
+              <div class="text-truncate" v-if="editItem !== i">
+                <span v-if="folder.name">{{ folder.name }}</span>
+                <span v-if="!folder.name" class="text-muted fst-italic">
                   empty
-                </span>
-                <span
-                  class="badge rounded-circle bg-primary ms-2"
-                  v-show="folderHover === i"
-                >
-                  {{ folder.links.length }}
                 </span>
               </div>
               <input
                 :id="`links-folder-input-${i}`"
-                v-show="editItem === i"
+                v-if="editItem === i"
                 type="text"
                 class="form-control form-control-sm"
                 placeholder="Folder name"
@@ -50,15 +47,33 @@
                 @change="changedItem()"
                 v-model="folder.name"
               />
+              <span
+                v-if="folderHover === i && editItem !== i"
+                class="badge rounded-circle bg-secondary ms-2"
+              >
+                {{ folder.links.length }}
+              </span>
             </div>
             <div
-              v-if="folderHover === i || editItem === i || deleteItem === i"
-              class="pe-1 d-flex align-items-center"
+              v-if="(folderHover === i || deleteItem === i) && editItem !== i"
+              class="pe-1 d-flex flex-row align-items-center"
             >
               <button
-                class="btn btn-sm btn-muted py-0 px-1 rounded-circle"
+                class="
+                  btn btn-sm btn-muted
+                  py-0
+                  px-1
+                  rounded-pill
+                  d-flex
+                  flex-row
+                  align-items-center
+                  text-primary
+                "
                 @click.stop="addLink(i)"
               >
+                <span class="text-uppercase pe-1" style="font-size: 0.8em">
+                  Add link
+                </span>
                 <i class="bi bi-bookmark-plus"></i>
               </button>
               <div class="vr my-2" />
@@ -187,25 +202,9 @@
               Empty
             </li>
           </draggable>
-          <!-- <ul class="list-group" v-if="folder.open">
-            <li class="list-group-item p-0 border-0">
-              <button
-                class="btn btn-sm btn-light w-100 p-0 border-top-0"
-                style="
-                  border-color: #ddd;
-                  border-top-left-radius: 0;
-                  border-top-right-radius: 0;
-                "
-                @click="addLink(i)"
-              >
-                <i class="bi bi-plus w-100"></i>
-              </button>
-            </li>
-          </ul> -->
         </div>
       </draggable>
-      <!-- <div>
-        <hr v-if="linkFolders.length > 0" class="text-muted" />
+      <div v-if="!linkFolders || linkFolders.length === 0">
         <button
           class="
             btn btn-sm btn-light
@@ -217,12 +216,10 @@
           style="border-color: #ddd"
           @click="addFolder()"
         >
-          <i class="bi bi-plus-circle w-100"></i>
-          <span class="w-100" v-show="linkFolders.length === 0">
-            Add new folder
-          </span>
+          <i class="bi bi-folder-plus w-100"></i>
+          <span class="w-100"> Add new folder </span>
         </button>
-      </div> -->
+      </div>
     </div>
   </div>
 </template>

@@ -1,5 +1,5 @@
 <template>
-  <div class="room-container">
+  <div class="room-container" :style="{ backgroundColor: background.value }">
     <div class="loading-overlay" v-if="!apps">
       <div class="spinner-border text-light" role="status"></div>
       <div class="pt-3"><p class="text-white">Connecting to room...</p></div>
@@ -20,11 +20,7 @@
           "
         >
           {{ roomDesc }}
-          <i
-            v-show="showEditTitle"
-            class="bi bi-pencil ms-2"
-            style="font-size: 0.8em"
-          ></i>
+          <i v-show="showEditTitle" class="bi bi-pencil ms-2 fs-08em"></i>
         </button>
         <input
           id="room-title-input"
@@ -44,20 +40,23 @@
 
     <div class="settings-button-container">
       <div class="pt-3">
-        <button class="btn btn-sm btn-light border" style="font-size: 0.8em">
+        <button
+          class="btn btn-sm btn-light border fs-08em"
+          @click="openSettings()"
+        >
           <i class="bi bi-sliders"></i>
         </button>
       </div>
     </div>
 
     <div class="toolbar-container">
-      <div class="btn-group-vertical border">
+      <div class="btn-group-vertical border border-muted bg-light rounded">
         <button
           v-for="(app, i) in apps"
           :key="i"
           type="button"
           class="btn app-button border-0"
-          :class="{ 'btn-dark': app.active, 'btn-secondary': !app.active }"
+          :class="{ 'btn-dark': app.active, 'btn-muted': !app.active }"
           @click="toggleMinimize(app)"
         >
           <i class="bi" :class="`bi-${app.icon} w-100`"></i>
@@ -100,10 +99,94 @@
       :username="username"
       @activate="toggleActiveApp($event, app)"
     />
+
+    <div class="modal fade" id="settingsModal" style="z-index: 99999">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header border-0 py-2 px-3">
+            <div
+              class="
+                modal-title
+                text-uppercase
+                user-select-none
+                fw-bold
+                fs-08em
+              "
+            >
+              <i class="bi bi-sliders pe-2 fs-1em"></i>
+              Room settings
+            </div>
+            <button
+              type="button"
+              class="btn btn-sm btn-muted rounded-circle"
+              data-bs-dismiss="modal"
+            >
+              <i class="bi bi-box-arrow-in-down-left fs-1em"></i>
+            </button>
+          </div>
+          <div class="modal-body">
+            <h6 class="fw-bold">Set background</h6>
+            <div class="input-group input-group-sm">
+              <button
+                class="btn btn-sm btn-light border dropdown-toggle"
+                type="button"
+                data-bs-toggle="dropdown"
+              >
+                <i :class="`bi bi-${selectedBgOpt.icon} fs-09em`"></i>
+                {{ selectedBgOpt.name }}
+              </button>
+              <ul class="dropdown-menu dropdown-menu-dark p-0">
+                <li
+                  v-for="(bgOpt, i) in backgroundOptions"
+                  :key="i"
+                  @click="changeBgType(bgOpt)"
+                >
+                  <a class="dropdown-item fs-09em" href="#">
+                    <i :class="`bi bi-${bgOpt.icon} fs-09em`"></i>
+                    {{ bgOpt.name }}
+                  </a>
+                </li>
+              </ul>
+              <input
+                type="text"
+                class="form-control"
+                v-model="background.value"
+              />
+              <button
+                class="btn btn-sm btn-muted border border-muted"
+                v-if="backgroundChanged"
+                @click="restoreBackground()"
+              >
+                <i class="bi bi-arrow-return-left fs-08em"></i>
+              </button>
+            </div>
+            <h6 class="fw-bold pt-3">Colors</h6>
+            <div class="btn-group border rounded w-100">
+              <button
+                v-for="(color, i) in backgrounds.colors"
+                :key="i"
+                type="button"
+                class="btn"
+                :style="{ backgroundColor: color }"
+                @click="
+                  background.value = color;
+                  background.type = 'color';
+                "
+              >
+                &nbsp;
+              </button>
+            </div>
+            <h6 class="fw-bold pt-3">Images</h6>
+            <h6 class="fw-bold pt-3">YouTube</h6>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import { Modal } from "bootstrap";
 import $ from "jquery";
 import * as _ from "lodash";
 import * as apps from "@/assets/apps.json";
@@ -124,13 +207,59 @@ export default {
     showEditTitle: false,
     editTitle: false,
     roomDesc: null,
+    settingsModal: null,
+    backgroundOptions: [
+      { name: "Color", type: "color", icon: "palette" },
+      { name: "Image URL", type: "image", icon: "card-image" },
+      { name: "YouTube URL", type: "youtube", icon: "youtube" },
+    ],
+    originalBackground: null,
+    background: {
+      value: "azure",
+      type: "color",
+    },
+    backgrounds: {
+      colors: [
+        "aliceblue",
+        "azure",
+        "antiquewhite",
+        "gainsboro",
+        "beige",
+        "lavender",
+        "lightblue",
+        "lemonchiffon",
+        "lightpink",
+        "lightskyblue",
+        "lightsteelblue",
+      ],
+    },
   }),
   watch: {
     roomDesc(newVal) {
       this.roomSync.set("description", newVal);
     },
+    background: {
+      handler(newVal) {
+        if (newVal !== this.originalBackground) {
+          $(".modal-backdrop.show").hide();
+        }
+      },
+      deep: true,
+    },
+  },
+  computed: {
+    selectedBgOpt() {
+      return _.find(this.backgroundOptions, { type: this.background.type });
+    },
+    backgroundChanged() {
+      return !_.isEqual(this.originalBackground, this.background);
+    },
   },
   created() {
+    $(document).ready(() => {
+      this.settingsModal = new Modal(document.getElementById("settingsModal"));
+    });
+
     const roomId = this.$route.params.roomId;
     this.username = localStorage.getItem(roomId);
 
@@ -197,6 +326,20 @@ export default {
     toggleMinimize(app) {
       this.$refs[app.component][0].toggleMinimize();
     },
+    openSettings() {
+      this.originalBackground = _.cloneDeep(this.background);
+      this.settingsModal.toggle();
+      $(".modal-backdrop.show").show();
+    },
+    changeBgType(bgOpt) {
+      if (this.background.type !== bgOpt.type) {
+        this.background.value = "";
+        this.background.type = bgOpt.type;
+      }
+    },
+    restoreBackground() {
+      this.background = _.cloneDeep(this.originalBackground);
+    },
   },
 };
 </script>
@@ -204,26 +347,32 @@ export default {
 <style scoped>
 .room-container {
   height: 100%;
-  background: aliceblue;
+  background: azure;
+}
+
+.user-cursor {
+  position: absolute;
+  z-index: 99998;
+  transform: translate(-90%, -16%);
 }
 
 .titlebar-container {
   position: absolute;
-  z-index: 99999;
+  z-index: 997;
   top: 10px;
   left: 25px;
 }
 
 .settings-button-container {
   position: absolute;
-  z-index: 99998;
+  z-index: 996;
   top: 40px;
   left: 25px;
 }
 
 .toolbar-container {
   position: absolute;
-  z-index: 99997;
+  z-index: 995;
   display: flex;
   align-items: center;
   left: 10px;
@@ -266,12 +415,6 @@ i.bi {
   z-index: 999999;
 }
 
-.user-cursor {
-  position: absolute;
-  z-index: 9999999;
-  transform: translate(-90%, -16%);
-}
-
 .user-cursor > span {
   border: 1px #0dcaf0 solid;
   border-radius: 5px;
@@ -280,5 +423,17 @@ i.bi {
   font-weight: bold;
   text-transform: uppercase;
   padding: 3px 3px 0px 3px;
+}
+
+.fs-08em {
+  font-size: 0.8em !important;
+}
+
+.fs-09em {
+  font-size: 0.9em !important;
+}
+
+.fs-1em {
+  font-size: 1em !important;
 }
 </style>

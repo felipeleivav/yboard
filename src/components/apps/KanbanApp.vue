@@ -20,7 +20,7 @@
           @mouseover="showItemOptions = i"
           @mouseleave="showItemOptions = false"
         >
-          <div v-show="editItem !== i">
+          <div class="text-truncate" v-show="editItem !== i">
             <span v-show="column.name">{{ column.name }}</span>
             <span v-show="!column.name" class="text-muted fst-italic">
               empty
@@ -28,7 +28,7 @@
           </div>
           <input
             :id="`kanban-input-${i}`"
-            v-show="editItem === i"
+            v-if="editItem === i"
             type="text"
             class="form-control form-control-sm"
             placeholder="Column name"
@@ -40,9 +40,8 @@
           />
 
           <div
-            v-show="
-              (showItemOptions === i && editItem !== i) || deleteItem === i
-            "
+            class="d-flex flex-row"
+            v-if="(showItemOptions === i && editItem !== i) || deleteItem === i"
           >
             <button
               class="btn btn-sm btn-muted py-0 px-1 rounded-circle"
@@ -94,7 +93,7 @@
             </div>
             <input
               :id="`kanban-input-${i}-${j}`"
-              v-show="editItem === `${i}-${j}`"
+              v-if="editItem === `${i}-${j}`"
               type="text"
               class="form-control form-control-sm"
               placeholder="Task name"
@@ -105,7 +104,8 @@
               v-model="task.name"
             />
             <div
-              v-show="
+              class="d-flex flex-row"
+              v-if="
                 (showItemOptions === `${i}-${j}` && editItem !== `${i}-${j}`) ||
                 deleteItem === `${i}-${j}`
               "
