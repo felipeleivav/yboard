@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex flex-column h-100">
-    <div class="overflow-auto flex-grow-1" style="margin-top: -10px">
+    <div class="overflow-auto flex-grow-1">
       <draggable
         animation="200"
         @change="draggableChange()"
@@ -59,25 +59,6 @@
               class="pe-1 d-flex flex-row align-items-center"
             >
               <button
-                class="
-                  btn btn-sm btn-muted
-                  py-0
-                  px-1
-                  rounded-pill
-                  d-flex
-                  flex-row
-                  align-items-center
-                  text-primary
-                "
-                @click.stop="addLink(i)"
-              >
-                <span class="text-uppercase pe-1" style="font-size: 0.8em">
-                  Add link
-                </span>
-                <i class="bi bi-bookmark-plus"></i>
-              </button>
-              <div class="vr my-2" />
-              <button
                 class="btn btn-sm btn-muted py-0 px-1 rounded-circle"
                 @click.stop="editFolder(i)"
               >
@@ -89,6 +70,27 @@
                 :class="{ 'btn-danger': deleteItem === i }"
               >
                 <i class="bi bi-trash3"></i>
+              </button>
+              <div class="vr m-2" />
+              <button
+                class="
+                  btn btn-sm btn-primary
+                  py-0
+                  px-1
+                  rounded
+                  d-flex
+                  flex-row
+                  align-items-center
+                "
+                @click.stop="addLink(i)"
+              >
+                <i class="bi bi-bookmark-plus"></i>
+                <span
+                  class="fw-bold text-uppercase ps-1 text-nowrap"
+                  style="font-size: 0.8em"
+                >
+                  Add link
+                </span>
               </button>
             </div>
           </div>
@@ -217,7 +219,7 @@
           @click="addFolder()"
         >
           <i class="bi bi-folder-plus w-100"></i>
-          <span class="w-100"> Add new folder </span>
+          <span class="w-100"> Add folder </span>
         </button>
       </div>
     </div>
@@ -243,6 +245,15 @@ export default {
     deleteItem: false,
     discardDeleteTimeout: null,
   }),
+  watch: {
+    linkFolders(newVal) {
+      const iconBtn =
+        newVal && newVal.length > 0
+          ? [{ icon: "folder-plus", callback: this.addFolder }]
+          : [];
+      this.$emit("setHeaderButtons", iconBtn);
+    },
+  },
   created() {
     this.linkFolders = this.sync.get("folders") || [
       {
@@ -257,13 +268,6 @@ export default {
         this.linkFolders = this.sync.get("folders");
       }
     });
-
-    this.$emit("setHeaderButtons", [
-      {
-        icon: "folder-plus",
-        callback: this.addFolder,
-      },
-    ]);
   },
   methods: {
     draggableChange() {

@@ -11,12 +11,20 @@
         v-for="(column, i) in kanbanColumns"
         :key="i"
         :id="`col-${i}`"
-        class="card kanban-column me-3 d-flex flex-column"
+        class="card kanban-column d-flex flex-column"
         @mouseover="showAddTask = i"
         @mouseleave="showAddTask = false"
+        :class="{ 'me-3': i < kanbanColumns.length - 1 }"
       >
         <div
-          class="card-header fw-bolder d-flex flex-row justify-content-between"
+          class="
+            card-header
+            d-flex
+            flex-row
+            justify-content-between
+            bg-white
+            text-dark
+          "
           @mouseover="showItemOptions = i"
           @mouseleave="showItemOptions = false"
         >
@@ -81,6 +89,10 @@
               flex-row
               justify-content-between
               task-item
+              border
+              mt-2
+              mx-2
+              rounded
             "
             @mouseover="showItemOptions = `${i}-${j}`"
             @mouseleave="showItemOptions = false"
@@ -132,20 +144,25 @@
           v-show="showAddTask === i"
           @click="addTaskToColumn(column, i)"
         >
-          <i class="bi bi-plus-circle" />
+          <i class="bi bi-plus" />
         </button>
       </li>
     </draggable>
     <div class="pe-3">
       <button
-        class="btn btn-light h-100 d-flex flex-column justify-content-center"
+        v-if="kanbanColumns.length === 0"
+        class="
+          btn btn-sm btn-light
+          h-100
+          d-flex
+          flex-column
+          justify-content-center
+        "
         style="border-color: #ddd"
         @click="addColumn()"
       >
-        <i class="bi bi-plus-circle w-100"></i>
-        <span class="w-100" v-show="kanbanColumns.length === 0">
-          Add new column
-        </span>
+        <i class="bi bi-kanban-fill w-100"></i>
+        <span class="w-100"> Add column </span>
       </button>
     </div>
   </div>
@@ -170,6 +187,15 @@ export default {
     deleteItem: false,
     discardDeleteTimeout: null,
   }),
+  watch: {
+    kanbanColumns(newVal) {
+      const iconBtn =
+        newVal && newVal.length > 0
+          ? [{ icon: "layout-sidebar-inset-reverse", callback: this.addColumn }]
+          : [];
+      this.$emit("setHeaderButtons", iconBtn);
+    },
+  },
   created() {
     this.kanbanColumns = this.sync.get("columns") || [];
 

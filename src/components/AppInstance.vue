@@ -38,7 +38,7 @@
         </button>
       </div>
     </div>
-    <div class="card-body overflow-auto">
+    <div class="card-body pt-1 overflow-auto">
       <component
         :is="app.component"
         :sync="app.sync"
@@ -164,5 +164,10 @@ export default {
 <style scoped>
 .drag-handler {
   cursor: grabbing;
+}
+
+.card-header {
+  background: white !important;
+  border-bottom: 0;
 }
 </style>

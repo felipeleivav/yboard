@@ -1,5 +1,5 @@
 <template>
-  <div class="room-container" :style="{ backgroundColor: background.value }">
+  <div class="room-container" :style="backgroundAttr">
     <div class="loading-overlay" v-if="!apps">
       <div class="spinner-border text-light" role="status"></div>
       <div class="pt-3"><p class="text-white">Connecting to room...</p></div>
@@ -7,11 +7,13 @@
 
     <div class="titlebar-container d-flex flex-column">
       <div class="d-flex">
-        <button class="btn btn-sm btn-dark fw-bold me-3">YB</button>
-        <div class="vr" />
+        <button class="btn btn-sm btn-dark border border-light rounded fw-bold">
+          YB
+        </button>
+        <div class="vr mx-3" />
         <button
           v-show="!editTitle"
-          class="btn btn-sm btn-muted font-monospace"
+          class="btn btn-sm btn-muted font-monospace bg-light fw-bold"
           @mouseover="showEditTitle = true"
           @mouseleave="showEditTitle = false"
           @click="
@@ -157,7 +159,7 @@
                 v-if="backgroundChanged"
                 @click="restoreBackground()"
               >
-                <i class="bi bi-arrow-return-left fs-08em"></i>
+                <i class="bi bi-backspace-fill fs-08em"></i>
               </button>
             </div>
             <h6 class="fw-bold pt-3">Colors</h6>
@@ -176,7 +178,22 @@
                 &nbsp;
               </button>
             </div>
-            <h6 class="fw-bold pt-3">Images</h6>
+            <h6 class="fw-bold pt-3">Patterns</h6>
+            <div class="btn-group border rounded w-100">
+              <button
+                v-for="(image, i) in backgrounds.images"
+                :key="i"
+                type="button"
+                class="btn"
+                :style="{ backgroundImage: 'url(' + image + ')' }"
+                @click="
+                  background.value = image;
+                  background.type = 'image';
+                "
+              >
+                &nbsp;
+              </button>
+            </div>
             <h6 class="fw-bold pt-3">YouTube</h6>
           </div>
         </div>
@@ -232,6 +249,19 @@ export default {
         "lightskyblue",
         "lightsteelblue",
       ],
+      images: [
+        "http://static.colourlovers.com/images/patterns/50/50713.png",
+        "http://static.colourlovers.com/images/patterns/4916/4916714.png",
+        "http://static.colourlovers.com/images/patterns/1101/1101098.png",
+        "http://static.colourlovers.com/images/patterns/95/95278.png",
+        "http://static.colourlovers.com/images/patterns/541/541926.png",
+        "http://static.colourlovers.com/images/patterns/90/90096.png",
+        "http://static.colourlovers.com/images/patterns/270/270063.png",
+        "http://static.colourlovers.com/images/patterns/2411/2411304.png",
+        "http://static.colourlovers.com/images/patterns/2142/2142956.png",
+        "http://static.colourlovers.com/images/patterns/929/929400.png",
+        "http://static.colourlovers.com/images/patterns/574/574030.png",
+      ],
     },
   }),
   watch: {
@@ -253,6 +283,15 @@ export default {
     },
     backgroundChanged() {
       return !_.isEqual(this.originalBackground, this.background);
+    },
+    backgroundAttr() {
+      if (this.background.type === "color") {
+        return { backgroundColor: this.background.value };
+      } else if (this.background.type === "image") {
+        return { backgroundImage: "url(" + this.background.value + ")" };
+      } else {
+        return { backgroundColor: "white" };
+      }
     },
   },
   created() {
