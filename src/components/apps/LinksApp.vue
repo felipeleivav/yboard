@@ -49,7 +49,7 @@
               />
               <span
                 v-if="folderHover === i && editItem !== i"
-                class="badge rounded-circle bg-secondary ms-2"
+                class="badge rounded-circle bg-primary ms-2"
               >
                 {{ folder.links.length }}
               </span>
@@ -71,26 +71,13 @@
               >
                 <i class="bi bi-trash3"></i>
               </button>
-              <div class="vr m-2" />
+              <div v-if="folder.links.length > 0" class="vr m-2" />
               <button
-                class="
-                  btn btn-sm btn-primary
-                  py-0
-                  px-1
-                  rounded
-                  d-flex
-                  flex-row
-                  align-items-center
-                "
+                v-if="folder.links.length > 0"
+                class="btn btn-sm btn-primary py-0 px-1 ms-1 rounded"
                 @click.stop="addLink(i)"
               >
                 <i class="bi bi-bookmark-plus"></i>
-                <span
-                  class="fw-bold text-uppercase ps-1 text-nowrap"
-                  style="font-size: 0.8em"
-                >
-                  Add link
-                </span>
               </button>
             </div>
           </div>
@@ -189,20 +176,21 @@
                 </button>
               </div>
             </li>
-            <li
+            <button
               v-if="folder.links.length === 0"
               class="
-                list-group-item
-                text-center
-                pt-3
-                pb-3
-                text-muted text-uppercase
-                user-select-none
+                btn btn-sm btn-light
+                w-100
+                d-flex
+                flex-column
+                justify-content-center
               "
-              style="font-size: 0.8em"
+              style="border-color: #ddd"
+              @click="addLink(i)"
             >
-              Empty
-            </li>
+              <i class="bi bi-bookmark-plus w-100"></i>
+              <span class="w-100"> Add link </span>
+            </button>
           </draggable>
         </div>
       </draggable>
@@ -228,6 +216,8 @@
 
 <script>
 import draggable from "vuedraggable";
+
+const DEFAULT_FOLDER = [{ open: true, name: "Main folder", links: [] }];
 
 export default {
   name: "LinksApp",
@@ -255,13 +245,7 @@ export default {
     },
   },
   created() {
-    this.linkFolders = this.sync.get("folders") || [
-      {
-        open: true,
-        name: "Main folder",
-        links: [],
-      },
-    ];
+    this.linkFolders = this.sync.get("folders") || DEFAULT_FOLDER;
 
     this.sync.observe((event) => {
       if (event.keysChanged.has("folders")) {

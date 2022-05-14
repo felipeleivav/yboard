@@ -1,5 +1,18 @@
 <template>
   <div class="room-container" :style="backgroundAttr">
+    <div id="bg-playback-container" v-if="background.type === 'youtube'">
+      <iframe
+        id="bg-playback"
+        allowfullscreen="1"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        title="YouTube Playback"
+        :src="`https://www.youtube.com/embed/${youtubeId}?autoplay=1&amp;controls=0&amp;start=10&amp;playsinline=1&amp;showinfo=0&amp;rel=0&amp;iv_load_policy=3&amp;modestbranding=1&amp;loop=1&amp;enablejsapi=1&amp;widgetid=1`"
+        width="100%"
+        height="100%"
+        frameborder="0"
+      ></iframe>
+    </div>
+
     <div class="loading-overlay" v-if="!apps">
       <div class="spinner-border text-light" role="status"></div>
       <div class="pt-3"><p class="text-white">Connecting to room...</p></div>
@@ -21,7 +34,7 @@
             $nextTick(() => $el.querySelector('#room-title-input').focus());
           "
         >
-          {{ roomDesc }}
+          {{ description }}
           <i v-show="showEditTitle" class="bi bi-pencil ms-2 fs-08em"></i>
         </button>
         <input
@@ -30,7 +43,7 @@
           type="text"
           class="form-control form-control-sm font-monospace"
           placeholder="Room's description"
-          v-model="roomDesc"
+          v-model="description"
           @blur="editTitle = false"
           @keyup.enter="editTitle = false"
           @keyup.esc="editTitle = false"
@@ -103,7 +116,11 @@
     />
 
     <div class="modal fade" id="settingsModal" style="z-index: 99999">
-      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div
+        class="
+          modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable
+        "
+      >
         <div class="modal-content">
           <div class="modal-header border-0 py-2 px-3">
             <div
@@ -127,8 +144,8 @@
             </button>
           </div>
           <div class="modal-body">
-            <h6 class="fw-bold">Set background</h6>
-            <div class="input-group input-group-sm">
+            <div class="fw-bold pb-1">Set background</div>
+            <div class="input-group input-group-sm rounded">
               <button
                 class="btn btn-sm btn-light border dropdown-toggle"
                 type="button"
@@ -155,6 +172,23 @@
                 v-model="background.value"
               />
               <button
+                v-if="background.type === 'youtube'"
+                class="btn btn-sm border border-muted"
+                @click="background.sound = !background.sound"
+                :class="
+                  background.sound ? 'btn-primary' : 'btn-outline-secondary'
+                "
+              >
+                <i
+                  class="fs-1em bi"
+                  :class="
+                    background.sound
+                      ? 'bi-volume-up-fill'
+                      : 'bi-volume-mute-fill'
+                  "
+                ></i>
+              </button>
+              <button
                 class="btn btn-sm btn-muted border border-muted"
                 v-if="backgroundChanged"
                 @click="restoreBackground()"
@@ -162,13 +196,13 @@
                 <i class="bi bi-backspace-fill fs-08em"></i>
               </button>
             </div>
-            <h6 class="fw-bold pt-3">Colors</h6>
+            <div class="fw-bold pt-3 pb-1">Colors</div>
             <div class="btn-group border rounded w-100">
               <button
                 v-for="(color, i) in backgrounds.colors"
                 :key="i"
                 type="button"
-                class="btn"
+                class="btn btn-sm"
                 :style="{ backgroundColor: color }"
                 @click="
                   background.value = color;
@@ -178,7 +212,25 @@
                 &nbsp;
               </button>
             </div>
-            <h6 class="fw-bold pt-3">Patterns</h6>
+            <div
+              class="
+                d-flex
+                flex-row
+                justify-content-between
+                align-items-center
+                pt-3
+                pb-1
+              "
+            >
+              <div class="fw-bold">Patterns</div>
+              <a
+                href="http://www.colourlovers.com/patterns"
+                target="_blank"
+                class="primary-link fs-08em"
+              >
+                Search more <i class="bi bi-box-arrow-up-right fs-08em"></i>
+              </a>
+            </div>
             <div class="btn-group border rounded w-100">
               <button
                 v-for="(image, i) in backgrounds.images"
@@ -194,7 +246,47 @@
                 &nbsp;
               </button>
             </div>
-            <h6 class="fw-bold pt-3">YouTube</h6>
+            <div
+              class="
+                d-flex
+                flex-row
+                justify-content-between
+                align-items-center
+                pt-3
+                pb-1
+              "
+            >
+              <div class="fw-bold">YouTube</div>
+              <a
+                href="https://www.youtube.com/results?search_query=lofi+jazz+cafe"
+                target="_blank"
+                class="primary-link fs-08em"
+              >
+                Search more <i class="bi bi-box-arrow-up-right fs-08em"></i>
+              </a>
+            </div>
+            <div class="btn-group border rounded w-100">
+              <button
+                v-for="(video, i) in backgrounds.youtube"
+                :key="i"
+                type="button"
+                class="btn"
+                :style="{
+                  backgroundImage: 'url(' + video.thumbnail + ')',
+                  backgroundPosition: 'center',
+                  height: '70px',
+                }"
+                @click="
+                  background.value = video.url;
+                  background.type = 'youtube';
+                "
+              >
+                &nbsp;
+                <span v-if="video.live" class="badge bg-danger">
+                  <i class="bi bi-broadcast-pin"></i>
+                </span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -206,9 +298,14 @@
 import { Modal } from "bootstrap";
 import $ from "jquery";
 import * as _ from "lodash";
+import getYouTubeID from "get-youtube-id";
 import * as apps from "@/assets/apps.json";
+import * as backgrounds from "@/assets/backgrounds.json";
 import AppInstance from "@/components/AppInstance";
 import YjsService from "@/services/YjsService";
+
+const DEFAULT_DESC = "Room's description";
+const DEFAULT_BG = { type: "color", value: "azure", sound: true };
 
 export default {
   name: "RoomView",
@@ -218,61 +315,42 @@ export default {
   data: () => ({
     apps: null,
     yjs: null,
-    username: null,
-    users: [],
     roomSync: null,
+    username: null,
+    // ui room data
+    users: [],
+    description: DEFAULT_DESC,
+    background: DEFAULT_BG,
+    // ui mechanics
+    settingsModal: null,
+    originalBackground: null,
+    youtubeId: null,
     showEditTitle: false,
     editTitle: false,
-    roomDesc: null,
-    settingsModal: null,
+    // options
+    backgrounds,
     backgroundOptions: [
       { name: "Color", type: "color", icon: "palette" },
       { name: "Image URL", type: "image", icon: "card-image" },
       { name: "YouTube URL", type: "youtube", icon: "youtube" },
     ],
-    originalBackground: null,
-    background: {
-      value: "azure",
-      type: "color",
-    },
-    backgrounds: {
-      colors: [
-        "aliceblue",
-        "azure",
-        "antiquewhite",
-        "gainsboro",
-        "beige",
-        "lavender",
-        "lightblue",
-        "lemonchiffon",
-        "lightpink",
-        "lightskyblue",
-        "lightsteelblue",
-      ],
-      images: [
-        "http://static.colourlovers.com/images/patterns/50/50713.png",
-        "http://static.colourlovers.com/images/patterns/4916/4916714.png",
-        "http://static.colourlovers.com/images/patterns/1101/1101098.png",
-        "http://static.colourlovers.com/images/patterns/95/95278.png",
-        "http://static.colourlovers.com/images/patterns/541/541926.png",
-        "http://static.colourlovers.com/images/patterns/90/90096.png",
-        "http://static.colourlovers.com/images/patterns/270/270063.png",
-        "http://static.colourlovers.com/images/patterns/2411/2411304.png",
-        "http://static.colourlovers.com/images/patterns/2142/2142956.png",
-        "http://static.colourlovers.com/images/patterns/929/929400.png",
-        "http://static.colourlovers.com/images/patterns/574/574030.png",
-      ],
-    },
   }),
   watch: {
-    roomDesc(newVal) {
+    description(newVal) {
       this.roomSync.set("description", newVal);
     },
     background: {
       handler(newVal) {
-        if (newVal !== this.originalBackground) {
+        if (_.isEqual(newVal, this.originalBackground)) {
           $(".modal-backdrop.show").hide();
         }
+        if (newVal.type === "youtube") {
+          this.youtubeId = getYouTubeID(newVal.value);
+        }
+        if (!newVal.sound) {
+          document.getElementById("bg-playback").mute();
+        }
+        this.roomSync.set("background", newVal);
       },
       deep: true,
     },
@@ -285,7 +363,9 @@ export default {
       return !_.isEqual(this.originalBackground, this.background);
     },
     backgroundAttr() {
-      if (this.background.type === "color") {
+      if (!this.background) {
+        return {};
+      } else if (this.background.type === "color") {
         return { backgroundColor: this.background.value };
       } else if (this.background.type === "image") {
         return { backgroundImage: "url(" + this.background.value + ")" };
@@ -320,13 +400,19 @@ export default {
         }));
 
         this.roomSync = doc.getMap("roomConfig");
-        this.roomDesc =
-          this.roomSync.get("description") || "Room's description";
+        this.description = this.roomSync.get("description") || this.description;
+        this.background = this.roomSync.get("background") || this.background;
 
         this.roomSync.observe((event) => {
           if (event.keysChanged.has("description")) {
-            this.roomDesc = this.roomSync.get("description");
+            this.description = this.roomSync.get("description") || DEFAULT_DESC;
           }
+          if (event.keysChanged.has("background")) {
+            if (!_.isEqual(this.background, this.roomSync.get("background"))) {
+              this.background = this.roomSync.get("background");
+              this.originalBackground = _.clone(this.background);
+            }
+          } // todo: solucionar too much recursion al sincronizar background entre 2 pares conectados a la room
         });
       })
       .catch(() => this.$router.push(`/error/${roomId}`));
@@ -366,7 +452,7 @@ export default {
       this.$refs[app.component][0].toggleMinimize();
     },
     openSettings() {
-      this.originalBackground = _.cloneDeep(this.background);
+      this.originalBackground = _.clone(this.background);
       this.settingsModal.toggle();
       $(".modal-backdrop.show").show();
     },
@@ -377,7 +463,7 @@ export default {
       }
     },
     restoreBackground() {
-      this.background = _.cloneDeep(this.originalBackground);
+      this.background = _.clone(this.originalBackground);
     },
   },
 };
@@ -386,7 +472,36 @@ export default {
 <style scoped>
 .room-container {
   height: 100%;
-  background: azure;
+}
+
+#bg-playback-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  width: 100%;
+  height: 100%;
+}
+
+#bg-playback {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@media (min-aspect-ratio: 16/9) {
+  #bg-playback {
+    height: 86.25vw !important;
+  }
+}
+@media (max-aspect-ratio: 16/9) {
+  #bg-playback {
+    width: 177.78vh !important;
+    height: 120% !important;
+  }
 }
 
 .user-cursor {

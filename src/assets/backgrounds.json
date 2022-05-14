@@ -1,0 +1,70 @@
+{
+  "colors": [
+    "aliceblue",
+    "azure",
+    "antiquewhite",
+    "gainsboro",
+    "beige",
+    "lavender",
+    "lightblue",
+    "lemonchiffon",
+    "lightpink",
+    "lightskyblue",
+    "lightsteelblue"
+  ],
+  "images": [
+    "http://static.colourlovers.com/images/patterns/50/50713.png",
+    "http://static.colourlovers.com/images/patterns/4916/4916714.png",
+    "http://static.colourlovers.com/images/patterns/1101/1101098.png",
+    "http://static.colourlovers.com/images/patterns/95/95278.png",
+    "http://static.colourlovers.com/images/patterns/541/541926.png",
+    "http://static.colourlovers.com/images/patterns/90/90096.png",
+    "http://static.colourlovers.com/images/patterns/5968/5968159.png",
+    "http://static.colourlovers.com/images/patterns/2411/2411304.png",
+    "http://static.colourlovers.com/images/patterns/2142/2142956.png",
+    "http://static.colourlovers.com/images/patterns/929/929400.png",
+    "http://static.colourlovers.com/images/patterns/574/574030.png"
+  ],
+  "youtube": [
+    {
+      "url": "https://www.youtube.com/watch?v=-5KAN9_CzSA",
+      "thumbnail": "https://img.youtube.com/vi/-5KAN9_CzSA/mqdefault.jpg",
+      "live": true
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=xgirCNccI68",
+      "thumbnail": "https://img.youtube.com/vi/xgirCNccI68/sddefault.jpg",
+      "live": true
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=DWcJFNfaw9c",
+      "thumbnail": "https://img.youtube.com/vi/DWcJFNfaw9c/mqdefault.jpg",
+      "live": true
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=5wRWniH7rt8",
+      "thumbnail": "https://i.ytimg.com/vi/5wRWniH7rt8/mqdefault.jpg",
+      "live": false
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=VMAPTo7RVCo",
+      "thumbnail": "https://img.youtube.com/vi/VMAPTo7RVCo/mqdefault.jpg",
+      "live": false
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=4q4vpQCIZ6w",
+      "thumbnail": "https://img.youtube.com/vi/4q4vpQCIZ6w/mqdefault.jpg",
+      "live": false
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=A2_yg19Pu7Y",
+      "thumbnail": "https://i.ytimg.com/vi/A2_yg19Pu7Y/mqdefault.jpg",
+      "live": false
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=CfPxlb8-ZQ0",
+      "thumbnail": "https://img.youtube.com/vi/CfPxlb8-ZQ0/mqdefault.jpg",
+      "live": false
+    }
+  ]
+}

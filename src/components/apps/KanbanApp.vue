@@ -22,16 +22,27 @@
             d-flex
             flex-row
             justify-content-between
+            align-items-center
             bg-white
             text-dark
+            border-bottom-0
+            fw-bold
           "
           @mouseover="showItemOptions = i"
           @mouseleave="showItemOptions = false"
         >
-          <div class="text-truncate" v-show="editItem !== i">
-            <span v-show="column.name">{{ column.name }}</span>
-            <span v-show="!column.name" class="text-muted fst-italic">
-              empty
+          <div class="d-flex flex-row align-items-center text-truncate">
+            <div class="text-truncate" v-if="editItem !== i">
+              <span v-show="column.name">{{ column.name }}</span>
+              <span v-show="!column.name" class="text-muted fst-italic">
+                empty
+              </span>
+            </div>
+            <span
+              v-if="showItemOptions === i && editItem !== i"
+              class="badge rounded-circle bg-primary ms-2"
+            >
+              {{ column.tasks.length }}
             </span>
           </div>
           <input
@@ -46,10 +57,9 @@
             @change="changedItem()"
             v-model="column.name"
           />
-
           <div
             class="d-flex flex-row"
-            v-if="(showItemOptions === i && editItem !== i) || deleteItem === i"
+            v-if="showItemOptions === i && editItem !== i"
           >
             <button
               class="btn btn-sm btn-muted py-0 px-1 rounded-circle"
@@ -74,6 +84,7 @@
             flex-grow-1
             border-bottom-0
             overflow-auto
+            pb-2
           "
           animation="200"
           group="tasks"
@@ -139,7 +150,7 @@
           </li>
         </draggable>
         <button
-          class="btn btn-muted p-0"
+          class="btn btn-sm btn-primary p-0"
           style="border-radius: 0 0 5px 5px"
           v-show="showAddTask === i"
           @click="addTaskToColumn(column, i)"
