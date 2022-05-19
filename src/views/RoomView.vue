@@ -325,6 +325,7 @@ export default {
     settingsModal: null,
     originalBackground: null,
     youtubeId: null,
+    youtubePlayer: null,
     showEditTitle: false,
     editTitle: false,
     // options
@@ -339,28 +340,53 @@ export default {
     description(newVal) {
       this.roomSync.set("description", newVal);
     },
-    background: {
-      handler(newVal) {
+    computedBackground: {
+      handler(newVal, oldVal) {
         if (_.isEqual(newVal, this.originalBackground)) {
           $(".modal-backdrop.show").hide();
         }
-        if (newVal.type === "youtube") {
+
+        if (
+          (newVal.type === "youtube" && oldVal.type !== "youtube") ||
+          (newVal.type === "youtube" && newVal.value !== oldVal.value)
+        ) {
           this.youtubeId = getYouTubeID(newVal.value);
+          this.$nextTick(() => {
+            this.youtubePlayer = new window.YT.Player("bg-playback", {
+              events: {
+                onReady: ({ target }) =>
+                  !newVal.sound ? target.mute() : target.unMute(),
+                onStateChange: ({ target }) =>
+                  !newVal.sound ? target.mute() : target.unMute(),
+              },
+            });
+          });
         }
-        if (!newVal.sound) {
-          document.getElementById("bg-playback").mute();
-        }
+
+        this.$nextTick(() => {
+          // nextTick() because youtubeId might have been changed
+          if (!newVal.sound) {
+            if (this.youtubePlayer?.mute) this.youtubePlayer.mute();
+          } else {
+            if (this.youtubePlayer?.unMute) this.youtubePlayer.unMute();
+          }
+        });
+
         this.roomSync.set("background", newVal);
       },
       deep: true,
     },
   },
   computed: {
+    computedBackground() {
+      return _.cloneDeep(this.background);
+    },
     selectedBgOpt() {
       return _.find(this.backgroundOptions, { type: this.background.type });
     },
     backgroundChanged() {
-      return !_.isEqual(this.originalBackground, this.background);
+      const o = (bg) => _.omit(bg, "sound");
+      return !_.isEqual(o(this.originalBackground), o(this.background));
     },
     backgroundAttr() {
       if (!this.background) {
@@ -412,7 +438,7 @@ export default {
               this.background = this.roomSync.get("background");
               this.originalBackground = _.clone(this.background);
             }
-          } // todo: solucionar too much recursion al sincronizar background entre 2 pares conectados a la room
+          }
         });
       })
       .catch(() => this.$router.push(`/error/${roomId}`));

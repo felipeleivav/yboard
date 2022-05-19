@@ -1,27 +1,36 @@
 [
   {
-    "component": "LinksApp",
-    "title": "Links",
-    "icon": "bookmarks",
-    "width": 350,
-    "height": 300,
-    "minWidth": 300,
-    "minHeight": 300
-  },
-  {
     "component": "TodoApp",
     "title": "Todo",
-    "icon": "journal-check",
+    "icon": "clipboard-check",
     "width": 300,
     "height": 300,
     "minWidth": 200,
     "minHeight": 200
   },
   {
+    "component": "NotesApp",
+    "title": "Notes",
+    "icon": "journal-text",
+    "width": 300,
+    "height": 300,
+    "minWidth": 300,
+    "minHeight": 300
+  },
+  {
     "component": "KanbanApp",
     "title": "Kanban",
     "icon": "kanban",
-    "width": 450,
+    "width": 490,
+    "height": 300,
+    "minWidth": 300,
+    "minHeight": 300
+  },
+  {
+    "component": "LinksApp",
+    "title": "Links",
+    "icon": "bookmarks",
+    "width": 350,
     "height": 300,
     "minWidth": 300,
     "minHeight": 300
