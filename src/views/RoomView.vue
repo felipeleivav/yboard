@@ -81,23 +81,23 @@
     </div>
 
     <div
-      v-for="user in users"
-      :key="user.id"
-      :id="`cursor-${user.id}`"
+      v-for="userState in users"
+      :key="userState.id"
+      :id="`cursor-${userState.id}`"
       class="d-flex flex-column text-center user-cursor"
     >
       <i class="bi bi-cursor-fill"></i>
-      <span>{{ user.username }}</span>
+      <span>{{ userState.user.name }}</span>
     </div>
 
     <div class="awareness-container">
       <img
         class="me-1"
         style="border-radius: 30px"
-        v-for="user in users"
-        :key="user.id"
-        v-tooltip.bottom="`${user.username}`"
-        :src="`https://ui-avatars.com/api/?name=${user.username}&background=random&size=24&bold=true`"
+        v-for="userState in users"
+        :key="userState.id"
+        v-tooltip.bottom="`${userState.user.name}`"
+        :src="`https://ui-avatars.com/api/?name=${userState.user.name}&background=random&size=24&bold=true`"
       />
       <img
         style="border: 2px orange solid; border-radius: 30px"
@@ -112,6 +112,7 @@
       :ref="app.component"
       :app="app"
       :username="username"
+      :awareness="yjs.wsp.awareness"
       @activate="toggleActiveApp($event, app)"
     />
 
@@ -453,8 +454,8 @@ export default {
           const ui = _.findIndex(this.users, { id: c });
           this.users[ui] = { id: c, ...state.get(c) };
           $(`#cursor-${c}`).css({
-            top: this.users[ui].cursor.y,
-            left: this.users[ui].cursor.x,
+            top: this.users[ui].roomCursor.y,
+            left: this.users[ui].roomCursor.x,
           });
         });
         _.each(changes.removed, (c) => {

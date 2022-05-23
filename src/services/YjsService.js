@@ -19,15 +19,15 @@ class YjsService {
   }
 
   startAwareness({ username, listener }) {
-    this.wsp.awareness.setLocalState({ username, cursor: { x: 0, y: 0 } });
+    this.wsp.awareness.setLocalState({ user: { name: username, color: 'blue' }, roomCursor: { x: 0, y: 0 } });
     this.wsp.awareness.on("change", changes => {
       listener.apply(null, [changes, this.wsp.awareness.getStates()]);
     });
 
     this.mouseTracker = event => {
       const state = this.wsp.awareness.getLocalState();
-      state.cursor.x = event.pageX;
-      state.cursor.y = event.pageY;
+      state.roomCursor.x = event.pageX;
+      state.roomCursor.y = event.pageY;
       this.wsp.awareness.setLocalState(state);
     };
     window.addEventListener("mousemove", this.mouseTracker);

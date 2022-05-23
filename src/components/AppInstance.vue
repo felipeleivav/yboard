@@ -43,6 +43,7 @@
         :is="app.component"
         :sync="app.sync"
         :username="username"
+        :awareness="awareness"
         @setHeaderButtons="headerButtons = $event"
       />
     </div>
@@ -62,6 +63,7 @@ export default {
   props: {
     app: Object,
     username: String,
+    awareness: Object,
   },
   data: () => ({
     window: null,
