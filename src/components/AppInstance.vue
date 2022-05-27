@@ -24,14 +24,17 @@
         }}</span>
       </div>
       <div class="d-flex">
-        <button
-          v-for="(button, i) in headerButtons"
-          :key="i"
-          class="btn btn-sm btn-muted"
-          @click="button.callback"
-        >
-          <i :class="`bi bi-${button.icon}`"></i>
-        </button>
+        <div class="d-flex flex-row-reverse">
+          <div v-for="(button, i) in headerButtons" :key="i">
+            <button
+              class="btn btn-sm btn-muted"
+              v-if="button.callback"
+              @click="button.callback"
+            >
+              <i :class="`bi bi-${button.icon}`"></i>
+            </button>
+          </div>
+        </div>
         <div v-if="headerButtons.length > 0" class="vr my-2" />
         <button class="btn btn-sm btn-muted" @click="minimize()">
           <i class="bi bi-box-arrow-in-down-left"></i>
@@ -44,7 +47,7 @@
         :sync="app.sync"
         :username="username"
         :awareness="awareness"
-        @setHeaderButtons="headerButtons = $event"
+        @setHeaderButtons="headerButtons = clone($event)"
       />
     </div>
   </div>
@@ -158,6 +161,9 @@ export default {
         $(`#app-${this.app.component}`).css("zIndex", this.globalIndexZ);
         this.$eventHub.$emit("z-index", this.globalIndexZ);
       }
+    },
+    clone(object) {
+      return _.cloneDeep(object);
     },
   },
 };

@@ -12,9 +12,9 @@
     "component": "NotesApp",
     "title": "Notes",
     "icon": "journal-text",
-    "width": 300,
+    "width": 420,
     "height": 300,
-    "minWidth": 300,
+    "minWidth": 420,
     "minHeight": 300
   },
   {
