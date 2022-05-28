@@ -54,12 +54,18 @@
     </div>
 
     <div class="settings-button-container">
-      <div class="pt-3">
+      <div class="btn-group-vertical pt-3">
         <button
           class="btn btn-sm btn-light border fs-08em"
           @click="openSettings()"
         >
           <i class="bi bi-sliders"></i>
+        </button>
+        <button
+          class="btn btn-sm btn-light border fs-08em"
+          @click="minimizeAll()"
+        >
+          <i class="bi bi-box-arrow-in-down-left"></i>
         </button>
       </div>
     </div>
@@ -116,6 +122,7 @@
       @activate="toggleActiveApp($event, app)"
     />
 
+    <!-- todo: refactor, this whole thing should be in a separate component -->
     <div class="modal fade" id="settingsModal" style="z-index: 99999">
       <div
         class="
@@ -482,6 +489,9 @@ export default {
       this.originalBackground = _.clone(this.background);
       this.settingsModal.toggle();
       $(".modal-backdrop.show").show();
+    },
+    minimizeAll() {
+      _.each(this.apps, (app) => this.$refs[app.component][0].minimize());
     },
     changeBgType(bgOpt) {
       if (this.background.type !== bgOpt.type) {

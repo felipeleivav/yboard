@@ -34,6 +34,7 @@
           >
             write here
           </div>
+          <!-- todo: refactor this, too many method calls -->
           <span
             v-if="
               getNoteUserCount(id) > 0 && noteHover !== id && deleteItem !== id
@@ -108,6 +109,7 @@ export default {
   props: {
     sync: Object,
     awareness: Object,
+    username: String,
   },
   data: () => ({
     editingNote: null,
@@ -152,10 +154,9 @@ export default {
     this.showNotes = true; // trigger watcher
 
     this.awareness.on("change", () => {
-      console.log(Array.from(this.awareness.getStates().values()));
       const states = _.filter(
         Array.from(this.awareness.getStates().values()),
-        (s) => s.noteId && s.cursor
+        (s) => s.noteId && s.cursor && s.user.name !== this.username
       );
       this.usersPerNote = _.countBy(states, "noteId");
     });
