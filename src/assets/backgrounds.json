@@ -65,6 +65,11 @@
       "url": "https://www.youtube.com/watch?v=CfPxlb8-ZQ0",
       "thumbnail": "https://img.youtube.com/vi/CfPxlb8-ZQ0/mqdefault.jpg",
       "live": false
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=TGan48YE9Us",
+      "thumbnail": "https://img.youtube.com/vi/TGan48YE9Us/mqdefault.jpg",
+      "live": false
     }
   ]
 }

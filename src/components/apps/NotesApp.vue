@@ -7,7 +7,7 @@
       @mouseover="notesHover = true"
       @mouseleave="notesHover = false"
     >
-      <div class="list-group flex-grow-1 rounded-0 overflow-scroll">
+      <div class="list-group flex-grow-1 rounded-0 overflow-auto">
         <button
           type="button"
           class="
@@ -24,7 +24,9 @@
           @mouseover="noteHover = id"
           @mouseleave="noteHover = false"
         >
-          <div v-if="title" class="flex-grow-1 text-truncate">{{ title }}</div>
+          <div v-if="title" class="flex-grow-1 text-truncate">
+            {{ title }}
+          </div>
           <div
             v-else
             class="flex-grow-1 text-truncate fst-italic"
@@ -32,6 +34,20 @@
           >
             write here
           </div>
+          <span
+            v-if="
+              getNoteUserCount(id) > 0 && noteHover !== id && deleteItem !== id
+            "
+            class="badge rounded-pill bg-secondary"
+          >
+            <i
+              class="bi"
+              :class="
+                getNoteUserCount(id) > 1 ? 'bi-people-fill' : 'bi-person-fill'
+              "
+            ></i>
+            {{ getNoteUserCount(id) > 1 ? getNoteUserCount(id) : "" }}
+          </span>
           <button
             v-if="noteHover === id || deleteItem === id"
             class="btn btn-sm btn-muted py-0 px-1 rounded-circle"
@@ -99,6 +115,7 @@ export default {
     noteList: null,
     quill: null,
     quillBinding: null,
+    usersPerNote: null,
     // ui mechanics
     notesHover: false,
     noteHover: false,
@@ -111,7 +128,7 @@ export default {
     editingNote: {
       handler() {
         this.refreshNoteList();
-        this.togglePin();
+        this.togglePinButton();
       },
       deep: true,
     },
@@ -133,6 +150,15 @@ export default {
     this.refreshNoteList();
 
     this.showNotes = true; // trigger watcher
+
+    this.awareness.on("change", () => {
+      console.log(Array.from(this.awareness.getStates().values()));
+      const states = _.filter(
+        Array.from(this.awareness.getStates().values()),
+        (s) => s.noteId && s.cursor
+      );
+      this.usersPerNote = _.countBy(states, "noteId");
+    });
   },
   mounted() {
     this.quill = new Quill(this.$el.querySelector("#note-editor"), QUILL_CFG);
@@ -158,6 +184,7 @@ export default {
           this.quill,
           this.awareness
         );
+        this.awareness.setLocalStateField("noteId", id);
       }
     },
     deleteNote(id, note) {
@@ -170,6 +197,9 @@ export default {
         this.deleteItem = id;
         this.deleteTimeout();
       }
+    },
+    getNoteUserCount(id) {
+      return _.has(this.usersPerNote, id) ? this.usersPerNote[id] : 0;
     },
     blurEditor() {
       this.quill.blur();
@@ -200,7 +230,7 @@ export default {
         this.quillBinding = null;
       }
     },
-    togglePin() {
+    togglePinButton() {
       const title = this.editingNote?.toString().split("\n", 1)[0];
       if (this.editingNote && !_.startsWith(title, "📌")) {
         this.icons[1] = { icon: "pin", callback: this.pinCurrentNote };
