@@ -180,6 +180,16 @@
                 v-model="background.value"
               />
               <button
+                v-if="background.type === 'image'"
+                class="btn btn-sm border border-muted"
+                @click="background.stretch = !background.stretch"
+                :class="
+                  background.stretch ? 'btn-primary' : 'btn-outline-secondary'
+                "
+              >
+                <i class="fs-1em bi bi-arrows-angle-expand"></i>
+              </button>
+              <button
                 v-if="background.type === 'youtube'"
                 class="btn btn-sm border border-muted"
                 @click="background.sound = !background.sound"
@@ -247,6 +257,7 @@
                 class="btn"
                 :style="{ backgroundImage: 'url(' + image + ')' }"
                 @click="
+                  background.stretch = false;
                   background.value = image;
                   background.type = 'image';
                 "
@@ -313,7 +324,12 @@ import AppInstance from "@/components/AppInstance";
 import YjsService from "@/services/YjsService";
 
 const DEFAULT_DESC = "Room's description";
-const DEFAULT_BG = { type: "color", value: "azure", sound: true };
+const DEFAULT_BG = {
+  type: "color",
+  value: "azure",
+  sound: true,
+  stretch: false,
+};
 
 export default {
   name: "RoomView",
@@ -373,10 +389,10 @@ export default {
 
         this.$nextTick(() => {
           // nextTick() because youtubeId might have been changed
-          if (!newVal.sound) {
-            if (this.youtubePlayer?.mute) this.youtubePlayer.mute();
-          } else {
-            if (this.youtubePlayer?.unMute) this.youtubePlayer.unMute();
+          if (this.youtubePlayer) {
+            newVal.sound
+              ? this.youtubePlayer.unMute()
+              : this.youtubePlayer.mute();
           }
         });
 
@@ -402,7 +418,17 @@ export default {
       } else if (this.background.type === "color") {
         return { backgroundColor: this.background.value };
       } else if (this.background.type === "image") {
-        return { backgroundImage: "url(" + this.background.value + ")" };
+        const stretch = this.background.stretch
+          ? {
+              backgroundRepeat: "no-repeat",
+              backgroundPosition: "center center",
+              backgroundSize: "cover",
+            }
+          : {};
+        return {
+          backgroundImage: "url(" + this.background.value + ")",
+          ...stretch,
+        };
       } else {
         return { backgroundColor: "white" };
       }
@@ -497,6 +523,7 @@ export default {
       if (this.background.type !== bgOpt.type) {
         this.background.value = "";
         this.background.type = bgOpt.type;
+        this.background.stretch = false;
       }
     },
     restoreBackground() {
