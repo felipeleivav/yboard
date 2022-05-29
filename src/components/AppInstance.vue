@@ -27,7 +27,7 @@
         <div class="d-flex flex-row-reverse">
           <div v-for="(button, i) in headerButtons" :key="i">
             <button
-              class="btn btn-sm btn-muted"
+              class="btn btn-sm btn-muted h-100"
               v-if="button.callback"
               @click="button.callback"
             >

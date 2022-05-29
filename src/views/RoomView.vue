@@ -107,9 +107,26 @@
       />
       <img
         style="border: 2px orange solid; border-radius: 30px"
-        v-tooltip.bottom="`${username}`"
         :src="`https://ui-avatars.com/api/?name=${username}&background=random&size=32&bold=true`"
+        @mouseover="showExitButton = true"
+        v-if="!showExitButton"
       />
+      <button
+        v-tooltip.bottom="`${username}`"
+        class="
+          btn btn-sm btn-dark
+          rounded-circle
+          d-flex
+          justify-content-center
+          align-items-center
+        "
+        style="width: 36px; height: 36px"
+        @mouseleave="showExitButton = false"
+        v-if="showExitButton"
+        @click="exit()"
+      >
+        <i class="bi bi-x"></i>
+      </button>
     </div>
 
     <AppInstance
@@ -342,6 +359,7 @@ export default {
     roomSync: null,
     username: null,
     // ui room data
+    roomId: null,
     users: [],
     description: DEFAULT_DESC,
     background: DEFAULT_BG,
@@ -352,6 +370,7 @@ export default {
     youtubePlayer: null,
     showEditTitle: false,
     editTitle: false,
+    showExitButton: false,
     // options
     backgrounds,
     backgroundOptions: [
@@ -439,18 +458,18 @@ export default {
       this.settingsModal = new Modal(document.getElementById("settingsModal"));
     });
 
-    const roomId = this.$route.params.roomId;
-    this.username = localStorage.getItem(roomId);
+    this.roomId = this.$route.params.roomId;
+    this.username = localStorage.getItem(this.roomId);
 
     if (!this.username) {
-      this.$router.push(`/join/${roomId}`);
+      this.$router.push(`/join/${this.roomId}`);
       return;
     }
 
     this.yjs = new YjsService();
 
     this.yjs
-      .getConnectedDoc(roomId)
+      .getConnectedDoc(this.roomId)
       .then((doc) => {
         this.apps = _.map(apps, (app) => ({
           ...app,
@@ -475,7 +494,7 @@ export default {
           }
         });
       })
-      .catch(() => this.$router.push(`/error/${roomId}`));
+      .catch(() => this.$router.push(`/error/${this.roomId}`));
 
     this.yjs.startAwareness({
       username: this.username,
@@ -528,6 +547,10 @@ export default {
     },
     restoreBackground() {
       this.background = _.clone(this.originalBackground);
+    },
+    exit() {
+      localStorage.removeItem(this.roomId);
+      this.$router.push(`/join/${this.roomId}`);
     },
   },
 };
