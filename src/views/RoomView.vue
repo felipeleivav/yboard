@@ -343,7 +343,7 @@ import YjsService from "@/services/YjsService";
 const DEFAULT_DESC = "Room's description";
 const DEFAULT_BG = {
   type: "color",
-  value: "azure",
+  value: backgrounds.colors[_.random(backgrounds.colors.length - 1)],
   sound: true,
   stretch: false,
 };
@@ -459,7 +459,7 @@ export default {
     });
 
     this.roomId = this.$route.params.roomId;
-    this.username = localStorage.getItem(this.roomId);
+    this.username = JSON.parse(localStorage.getItem(this.roomId)).username;
 
     if (!this.username) {
       this.$router.push(`/join/${this.roomId}`);
@@ -478,9 +478,15 @@ export default {
           active: false,
         }));
 
+        const initBackground = (bg) => {
+          this.roomSync.set("background", bg);
+          return bg;
+        };
+
         this.roomSync = doc.getMap("roomConfig");
         this.description = this.roomSync.get("description") || this.description;
-        this.background = this.roomSync.get("background") || this.background;
+        this.background =
+          this.roomSync.get("background") || initBackground(this.background);
 
         this.roomSync.observe((event) => {
           if (event.keysChanged.has("description")) {
@@ -549,8 +555,7 @@ export default {
       this.background = _.clone(this.originalBackground);
     },
     exit() {
-      localStorage.removeItem(this.roomId);
-      this.$router.push(`/join/${this.roomId}`);
+      this.$router.push("/lobby");
     },
   },
 };

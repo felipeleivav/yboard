@@ -6,12 +6,12 @@ Vue.use(VueRouter);
 const routes = [
   {
     path: '/',
-    redirect: '/create'
+    redirect: '/lobby'
   },
   {
-    path: '/create',
-    name: 'create',
-    component: () => import(/* webpackChunkName: "create" */ '../views/CreateRoomView.vue'),
+    path: '/lobby',
+    name: 'lobby',
+    component: () => import(/* webpackChunkName: "lobby" */ '../views/LobbyView.vue'),
     alias: '/'
   },
   {

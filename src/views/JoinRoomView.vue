@@ -33,6 +33,7 @@
 
 <script>
 import * as _ from "lodash";
+import { DateTime } from "luxon";
 
 export default {
   name: "JoinRoomView",
@@ -42,7 +43,7 @@ export default {
   }),
   created() {
     this.roomId = this.$route.params.roomId;
-    this.username = localStorage.getItem(this.roomId);
+    this.username = JSON.parse(localStorage.getItem(this.roomId)).username;
   },
   computed: {
     invalidUsername() {
@@ -52,7 +53,13 @@ export default {
   methods: {
     joinRoom() {
       if (!this.invalidUsername && !_.isEmpty(this.username)) {
-        localStorage.setItem(this.roomId, this.username);
+        localStorage.setItem(
+          this.roomId,
+          JSON.stringify({
+            username: this.username,
+            lastAccess: DateTime.now(),
+          })
+        );
         this.$router.push(`/room/${this.roomId}`);
       }
     },
