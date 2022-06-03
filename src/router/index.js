@@ -15,11 +15,6 @@ const routes = [
     alias: '/'
   },
   {
-    path: '/join/:roomId',
-    name: 'join',
-    component: () => import(/* webpackChunkName: "join" */ '../views/JoinRoomView.vue')
-  },
-  {
     path: '/room/:roomId',
     name: 'room',
     component: () => import(/* webpackChunkName: "room" */ '../views/RoomView.vue')

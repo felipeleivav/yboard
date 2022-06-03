@@ -15,7 +15,20 @@
         <div class="mb-3">
           <p>Couldn't connect to the room server. Please try again.</p>
         </div>
-        <button class="btn btn-primary" @click="retry()">Retry</button>
+        <button
+          class="btn btn-dark text-uppercase fw-bold me-3"
+          style="font-size: 0.9em"
+          @click="retry()"
+        >
+          Retry
+        </button>
+        <button
+          class="btn btn-outline-dark text-uppercase fw-bold"
+          style="font-size: 0.9em"
+          @click="$router.push('/lobby')"
+        >
+          Go to lobby
+        </button>
       </div>
     </div>
   </div>
@@ -32,7 +45,7 @@ export default {
   },
   methods: {
     retry() {
-      this.$router.push(`/join/${this.roomId}`);
+      this.$router.push(`/lobby?join=${this.roomId}`);
     },
   },
 };
@@ -40,6 +53,6 @@ export default {
 
 <style scoped>
 .custom-bg {
-  background-color: azure;
+  background-image: url("http://static.colourlovers.com/images/patterns/864/864558.png?1273579140");
 }
 </style>

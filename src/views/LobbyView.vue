@@ -9,21 +9,63 @@
       justify-content-center
     "
   >
-    <div class="card border-1 border-secondary" style="width: 500px">
+    <div
+      class="card border-1 border-secondary overflow-auto"
+      style="width: 500px; max-height: 80%"
+    >
       <div class="card-body">
-        <div class="d-flex flex-row">
-          <div class="pe-3 flex-grow-1">
+        <div class="d-flex flex-row" v-if="joinRoomId">
+          <div class="input-group pe-3 flex-grow-1 position-relative">
             <input
               type="text"
               class="form-control"
               :class="{ 'is-invalid': invalidUsername }"
               id="username"
               v-model="username"
-              placeholder="Enter username..."
+              placeholder="Choose your username..."
+              maxlength="20"
+              @keyup.enter="joinRoom()"
+            />
+            <div class="invalid-tooltip">Letters and numbers only</div>
+            <span
+              class="input-group-text"
+              style="max-width: 30%"
+              v-tooltip.bottom="joinRoomId"
+            >
+              <span class="text-truncate">@{{ joinRoomId }}</span>
+            </span>
+            <button
+              class="btn btn-sm btn-secondary"
+              type="button"
+              @click="
+                joinRoomId = null;
+                $router.push('/lobby');
+              "
+            >
+              <i class="bi bi-x"></i>
+            </button>
+          </div>
+          <button
+            class="btn btn-dark text-uppercase fw-bold text-nowrap"
+            style="font-size: 0.8rem"
+            @click="joinRoom()"
+          >
+            Join room
+          </button>
+        </div>
+        <div class="d-flex flex-row" v-if="!joinRoomId">
+          <div class="pe-3 flex-grow-1 position-relative">
+            <input
+              type="text"
+              class="form-control"
+              :class="{ 'is-invalid': invalidUsername }"
+              id="username"
+              v-model="username"
+              placeholder="Choose your username..."
               maxlength="20"
               @keyup.enter="createRoom()"
             />
-            <div class="invalid-feedback">Letters and numbers only</div>
+            <div class="invalid-tooltip">Letters and numbers only</div>
           </div>
           <button
             class="btn btn-dark text-uppercase fw-bold"
@@ -45,7 +87,7 @@
               text-uppercase
             "
             style="height: 51px; font-size: 0.9em"
-            v-for="room in rooms"
+            v-for="room in latestRooms"
             :key="room.id"
             :href="`room/${room.id}`"
             @mouseover="showRoomOptions = room.id"
@@ -65,6 +107,23 @@
               <i class="bi bi-trash2-fill"></i>
             </button>
           </a>
+          <a
+            class="
+              list-group-item
+              bg-dark
+              text-white
+              fw-bold
+              text-uppercase
+              d-flex
+              justify-content-center
+              p-0
+            "
+            style="font-size: 0.8em; cursor: pointer"
+            v-if="!showAllRooms && rooms.length > 5"
+            @click="showAllRooms = true"
+          >
+            Show all ({{ rooms.length - 5 }})
+          </a>
         </ul>
       </div>
     </div>
@@ -82,17 +141,23 @@ export default {
     idGenerator: customAlphabet("1234567890abcdefghijklmnopqrstuvwxyz", 20),
     username: null,
     rooms: [],
+    joinRoomId: null,
     showRoomOptions: false,
     deleteItem: false,
     discardDeleteTimeout: null,
+    showAllRooms: false,
   }),
   computed: {
     invalidUsername() {
       return !/^[A-Za-z0-9]+$/.test(this.username);
     },
+    latestRooms() {
+      return this.showAllRooms ? this.rooms : this.rooms.slice(0, 5);
+    },
   },
   created() {
     this.loadRooms();
+    this.joinRoomId = this.$route.query.join;
   },
   methods: {
     loadRooms() {
@@ -113,6 +178,18 @@ export default {
           })
         );
         this.$router.push(`/room/${roomId}`);
+      }
+    },
+    joinRoom() {
+      if (!this.invalidUsername && !_.isEmpty(this.username)) {
+        localStorage.setItem(
+          this.joinRoomId,
+          JSON.stringify({
+            username: this.username,
+            lastAccess: DateTime.now(),
+          })
+        );
+        this.$router.push(`/room/${this.joinRoomId}`);
       }
     },
     removeRoom(roomId) {

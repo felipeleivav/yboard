@@ -334,6 +334,7 @@
 import { Modal } from "bootstrap";
 import $ from "jquery";
 import * as _ from "lodash";
+import { DateTime } from "luxon";
 import getYouTubeID from "get-youtube-id";
 import * as apps from "@/assets/apps.json";
 import * as backgrounds from "@/assets/backgrounds.json";
@@ -385,10 +386,6 @@ export default {
     },
     computedBackground: {
       handler(newVal, oldVal) {
-        if (_.isEqual(newVal, this.originalBackground)) {
-          $(".modal-backdrop.show").hide();
-        }
-
         if (
           (newVal.type === "youtube" && oldVal.type !== "youtube") ||
           (newVal.type === "youtube" && newVal.value !== oldVal.value)
@@ -455,16 +452,25 @@ export default {
   },
   created() {
     $(document).ready(() => {
-      this.settingsModal = new Modal(document.getElementById("settingsModal"));
+      if (document.getElementById("settingsModal"))
+        this.settingsModal = new Modal(
+          document.getElementById("settingsModal")
+        );
     });
 
     this.roomId = this.$route.params.roomId;
-    this.username = JSON.parse(localStorage.getItem(this.roomId)).username;
+    this.username = localStorage.getItem(this.roomId)
+      ? JSON.parse(localStorage.getItem(this.roomId)).username
+      : null;
 
     if (!this.username) {
-      this.$router.push(`/join/${this.roomId}`);
+      this.$router.push(`/lobby?join=${this.roomId}`);
       return;
     }
+
+    const room = JSON.parse(localStorage.getItem(this.roomId));
+    room.lastAccess = DateTime.now();
+    localStorage.setItem(this.roomId, JSON.stringify(room));
 
     this.yjs = new YjsService();
 
@@ -539,7 +545,6 @@ export default {
     openSettings() {
       this.originalBackground = _.clone(this.background);
       this.settingsModal.toggle();
-      $(".modal-backdrop.show").show();
     },
     minimizeAll() {
       _.each(this.apps, (app) => this.$refs[app.component][0].minimize());

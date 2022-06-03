@@ -170,7 +170,6 @@ export default {
   },
   methods: {
     addNote() {
-      // todo: mostrar icono users en las notas
       this.notes.set(nanoid(), new Y.Text());
     },
     editNote(id) {
