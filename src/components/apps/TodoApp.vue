@@ -34,7 +34,12 @@
           placeholder="Enter task name..."
           @keyup.enter="addTask()"
         />
-        <button class="btn btn-primary" @click="addTask()">Add</button>
+        <button
+          class="btn btn-primary text-uppercase fw-bold fs-08em"
+          @click="addTask()"
+        >
+          Add
+        </button>
       </div>
     </div>
   </div>

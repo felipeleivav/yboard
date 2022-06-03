@@ -189,7 +189,7 @@
               @click="addLink(i)"
             >
               <i class="bi bi-bookmark-plus w-100"></i>
-              <span class="w-100"> Add link </span>
+              <span class="w-100 text-uppercase fs-08em"> Add link </span>
             </button>
           </draggable>
         </div>
@@ -207,7 +207,7 @@
           @click="addFolder()"
         >
           <i class="bi bi-folder-plus w-100"></i>
-          <span class="w-100"> Add folder </span>
+          <span class="w-100 text-uppercase fs-08em"> Add folder </span>
         </button>
       </div>
     </div>

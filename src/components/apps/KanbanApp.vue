@@ -173,7 +173,7 @@
         @click="addColumn()"
       >
         <i class="bi bi-kanban-fill w-100"></i>
-        <span class="w-100"> Add column </span>
+        <span class="w-100 text-uppercase fs-08em"> Add column </span>
       </button>
     </div>
   </div>

@@ -105,7 +105,12 @@
           @keyup.enter="setTimer()"
         />
       </div>
-      <button class="btn btn-primary ms-3" @click="setTimer()">Set</button>
+      <button
+        class="btn btn-primary ms-3 text-uppercase fw-bold fs-08em"
+        @click="setTimer()"
+      >
+        Set
+      </button>
     </div>
   </div>
 </template>

@@ -675,16 +675,4 @@ i.bi {
   text-transform: uppercase;
   padding: 3px 3px 0px 3px;
 }
-
-.fs-08em {
-  font-size: 0.8em !important;
-}
-
-.fs-09em {
-  font-size: 0.9em !important;
-}
-
-.fs-1em {
-  font-size: 1em !important;
-}
 </style>
