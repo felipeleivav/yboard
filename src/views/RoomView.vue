@@ -448,6 +448,7 @@ export default {
     },
   },
   created() {
+    // todo: this thing do too much stuff, refactor
     $(document).ready(() => {
       if (document.getElementById("settingsModal"))
         this.settingsModal = new Modal(
@@ -560,7 +561,7 @@ export default {
       this.background = _.clone(this.originalBackground);
     },
     exit() {
-      this.$router.push("/lobby");
+      this.$router.push(`/lobby?join=${this.roomId}`);
     },
   },
 };

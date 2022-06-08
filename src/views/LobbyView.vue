@@ -34,7 +34,7 @@
             </div>
             <span
               class="input-group-text"
-              style="max-width: 30%"
+              style="max-width: 40%"
               v-tooltip.bottom="joinRoomId"
             >
               <span class="text-truncate">@{{ joinRoomId }}</span>
@@ -44,6 +44,7 @@
               type="button"
               @click="
                 joinRoomId = null;
+                username = null;
                 $router.push('/lobby');
               "
             >
@@ -51,7 +52,7 @@
             </button>
           </div>
           <button
-            class="btn btn-dark text-uppercase fw-bold text-nowrap"
+            class="btn btn-primary text-uppercase fw-bold text-nowrap"
             style="font-size: 0.8rem"
             @click="joinRoom()"
           >
@@ -86,7 +87,7 @@
           </button>
         </div>
         <ul class="list-group pt-3" v-if="rooms.length > 0">
-          <a
+          <button
             class="
               list-group-item
               d-flex
@@ -99,7 +100,7 @@
             style="height: 51px; font-size: 0.9em"
             v-for="room in latestRooms"
             :key="room.id"
-            :href="`room/${room.id}`"
+            @click="loadJoinRoom(room.id)"
             @mouseover="showRoomOptions = room.id"
             @mouseleave="showRoomOptions = false"
           >
@@ -116,7 +117,7 @@
             >
               <i class="bi bi-trash2-fill"></i>
             </button>
-          </a>
+          </button>
           <a
             class="
               list-group-item
@@ -168,6 +169,11 @@ export default {
   created() {
     this.loadRooms();
     this.joinRoomId = this.$route.query.join;
+
+    if (this.joinRoomId) {
+      const room = localStorage.getItem(this.joinRoomId);
+      this.username = room ? JSON.parse(room).username : null;
+    }
   },
   methods: {
     loadRooms() {
@@ -201,6 +207,13 @@ export default {
         );
         this.$router.push(`/room/${this.joinRoomId}`);
       }
+    },
+    loadJoinRoom(roomId) {
+      this.joinRoomId = roomId;
+      const room = localStorage.getItem(roomId);
+      this.username = room ? JSON.parse(room).username : null;
+
+      this.$router.push(`/lobby?join=${roomId}`);
     },
     removeRoom(roomId) {
       if (this.deleteItem === roomId) {

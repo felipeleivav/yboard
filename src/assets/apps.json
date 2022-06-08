@@ -57,6 +57,8 @@
     "title": "Spotify",
     "icon": "spotify",
     "width": 300,
-    "height": 380
+    "height": 380,
+    "minWidth": 250,
+    "minHeight": 250
   }
 ]
