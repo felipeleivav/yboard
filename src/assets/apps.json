@@ -51,5 +51,12 @@
     "width": 370,
     "height": 210,
     "resizable": false
+  },
+  {
+    "component": "SpotifyApp",
+    "title": "Spotify",
+    "icon": "spotify",
+    "width": 300,
+    "height": 380
   }
 ]

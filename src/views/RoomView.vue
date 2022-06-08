@@ -20,9 +20,23 @@
 
     <div class="titlebar-container d-flex flex-column">
       <div class="d-flex">
-        <button class="btn btn-sm btn-dark border border-light rounded fw-bold">
-          YB
-        </button>
+        <div class="btn-group">
+          <button class="btn btn-sm btn-dark border border-light fw-bold">
+            YB
+          </button>
+          <button
+            class="btn btn-sm btn-light border fs-08em"
+            @click="openSettings()"
+          >
+            <i class="bi bi-sliders"></i>
+          </button>
+          <button
+            class="btn btn-sm btn-light border fs-08em"
+            @click="minimizeAll()"
+          >
+            <i class="bi bi-box-arrow-in-down-left"></i>
+          </button>
+        </div>
         <div class="vr mx-3" />
         <button
           v-show="!editTitle"
@@ -53,23 +67,6 @@
       </div>
     </div>
 
-    <div class="settings-button-container">
-      <div class="btn-group-vertical pt-3">
-        <button
-          class="btn btn-sm btn-light border fs-08em"
-          @click="openSettings()"
-        >
-          <i class="bi bi-sliders"></i>
-        </button>
-        <button
-          class="btn btn-sm btn-light border fs-08em"
-          @click="minimizeAll()"
-        >
-          <i class="bi bi-box-arrow-in-down-left"></i>
-        </button>
-      </div>
-    </div>
-
     <div class="toolbar-container">
       <div class="btn-group-vertical border border-muted bg-light rounded">
         <button
@@ -79,6 +76,7 @@
           class="btn app-button border-0"
           :class="{ 'btn-dark': app.active, 'btn-muted': !app.active }"
           @click="toggleMinimize(app)"
+          @contextmenu.prevent="restorePosition(app)"
         >
           <i class="bi" :class="`bi-${app.icon} w-100`"></i>
           <span class="app-title w-100">{{ app.title }}</span>
@@ -96,7 +94,7 @@
       <span>{{ userState.user.name }}</span>
     </div>
 
-    <div class="awareness-container">
+    <div class="awareness-container d-flex flex-row align-items-center">
       <img
         class="me-1"
         style="border-radius: 30px"
@@ -306,7 +304,7 @@
                 v-for="(video, i) in backgrounds.youtube"
                 :key="i"
                 type="button"
-                class="btn"
+                class="btn btn-sm"
                 :style="{
                   backgroundImage: 'url(' + video.thumbnail + ')',
                   backgroundPosition: 'center',
@@ -317,7 +315,6 @@
                   background.type = 'youtube';
                 "
               >
-                &nbsp;
                 <span v-if="video.live" class="badge bg-danger">
                   <i class="bi bi-broadcast-pin"></i>
                 </span>
@@ -331,10 +328,10 @@
 </template>
 
 <script>
-import { Modal } from "bootstrap";
 import $ from "jquery";
 import * as _ from "lodash";
 import { DateTime } from "luxon";
+import { Modal } from "bootstrap";
 import getYouTubeID from "get-youtube-id";
 import * as apps from "@/assets/apps.json";
 import * as backgrounds from "@/assets/backgrounds.json";
@@ -542,6 +539,9 @@ export default {
     toggleMinimize(app) {
       this.$refs[app.component][0].toggleMinimize();
     },
+    restorePosition(app) {
+      this.$refs[app.component][0].restorePosition();
+    },
     openSettings() {
       this.originalBackground = _.clone(this.background);
       this.settingsModal.toggle();
@@ -611,13 +611,6 @@ export default {
   position: absolute;
   z-index: 997;
   top: 10px;
-  left: 25px;
-}
-
-.settings-button-container {
-  position: absolute;
-  z-index: 996;
-  top: 40px;
   left: 25px;
 }
 

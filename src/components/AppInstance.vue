@@ -41,13 +41,21 @@
         </button>
       </div>
     </div>
-    <div class="card-body pt-1 overflow-auto">
+    <div
+      class="card-body overflow-auto"
+      :class="[
+        padding ? 'pt-1' : 'p-0',
+        overflowAuto ? 'overflow-auto' : 'overflow-visible',
+      ]"
+    >
       <component
         :is="app.component"
         :sync="app.sync"
         :username="username"
         :awareness="awareness"
         @setHeaderButtons="headerButtons = clone($event)"
+        @setPadding="padding = $event"
+        @setOverflowAuto="overflowAuto = $event"
       />
     </div>
   </div>
@@ -71,6 +79,8 @@ export default {
   data: () => ({
     window: null,
     globalIndexZ: 0,
+    padding: true,
+    overflowAuto: true,
     headerButtons: [],
   }),
   watch: {
@@ -151,6 +161,12 @@ export default {
     },
     toggleMinimize() {
       this.window.minimized = !this.window.minimized;
+      this.app.sync.set("window", this.window);
+    },
+    restorePosition() {
+      $(`#app-${this.app.component}`).css({ top: 68, left: 87 });
+      this.window.top = 68;
+      this.window.left = 87;
       this.app.sync.set("window", this.window);
     },
     bringForward() {

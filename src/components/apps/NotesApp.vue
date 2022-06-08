@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex flex-row h-100 border border-muted rounded">
+  <div class="d-flex flex-row h-100 border-top border-muted rounded-bottom">
     <div
       v-if="showNotes"
       class="d-flex flex-column h-100 border-end border-muted"
@@ -17,9 +17,9 @@
             d-flex
             flex-row
           "
-          v-for="({ id, note, title }, i) in noteList"
+          v-for="{ id, note, title } in noteList"
           :key="id"
-          :class="{ active: editingNote === note, 'rounded-top-left': i === 0 }"
+          :class="{ active: editingNote === note }"
           @click="editNote(id)"
           @mouseover="noteHover = id"
           @mouseleave="noteHover = false"
@@ -141,6 +141,8 @@ export default {
     },
   },
   created() {
+    this.$emit("setPadding", false);
+
     const init = () => {
       const newMap = new Y.Map();
       this.sync.set("notes", newMap);
@@ -251,9 +253,5 @@ export default {
 #note-editor {
   font-family: var(--bs-font-sans-serif);
   font-size: 1em;
-}
-
-.rounded-top-left {
-  border-radius: 5px 0 0 0 !important;
 }
 </style>

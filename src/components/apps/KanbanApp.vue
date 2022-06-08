@@ -127,7 +127,7 @@
               v-model="task.name"
             />
             <div
-              class="d-flex flex-row"
+              class="d-flex flex-row align-items-center"
               v-if="
                 (showItemOptions === `${i}-${j}` && editItem !== `${i}-${j}`) ||
                 deleteItem === `${i}-${j}`

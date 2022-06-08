@@ -12,33 +12,44 @@
           v-for="(task, i) in tasks"
           :key="i"
           :id="`task-${i}`"
-          class="list-group-item"
+          class="list-group-item d-flex flex-row align-items-center"
           @click="toggleTaskState(task)"
         >
           <input
-            class="form-check-input me-1 me-2"
+            class="form-check-input me-1 me-2 flex-shrink-0"
             type="checkbox"
             :checked="task.done"
           />
           <span :class="{ 'task-done': task.done }">{{ task.name }}</span>
         </li>
       </draggable>
+      <div
+        v-if="tasks.length === 0"
+        class="
+          d-flex
+          justify-content-center
+          align-items-center
+          h-100
+          user-select-none
+        "
+      >
+        <span class="text-uppercase fs-08em" style="color: lightgray">
+          No tasks
+        </span>
+      </div>
     </div>
     <div class="d-flex pt-3">
       <div class="input-group">
         <input
           type="text"
-          class="form-control"
+          class="form-control first-item-radius"
           v-model="newTask"
           maxlength="50"
           placeholder="Enter task name..."
           @keyup.enter="addTask()"
         />
-        <button
-          class="btn btn-primary text-uppercase fw-bold fs-08em"
-          @click="addTask()"
-        >
-          Add
+        <button class="btn btn-primary last-item-radius" @click="addTask()">
+          <i class="bi bi-plus"></i>
         </button>
       </div>
     </div>

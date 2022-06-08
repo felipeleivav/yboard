@@ -26,7 +26,12 @@
               maxlength="20"
               @keyup.enter="joinRoom()"
             />
-            <div class="invalid-tooltip">Letters and numbers only</div>
+            <div
+              class="invalid-tooltip fs-08em py-0 px-2 rounded-pill"
+              style="top: 70%"
+            >
+              Letters and numbers only
+            </div>
             <span
               class="input-group-text"
               style="max-width: 30%"
@@ -65,7 +70,12 @@
               maxlength="20"
               @keyup.enter="createRoom()"
             />
-            <div class="invalid-tooltip">Letters and numbers only</div>
+            <div
+              class="invalid-tooltip fs-08em py-0 px-2 rounded-pill"
+              style="top: 70%"
+            >
+              Letters and numbers only
+            </div>
           </div>
           <button
             class="btn btn-dark text-uppercase fw-bold"

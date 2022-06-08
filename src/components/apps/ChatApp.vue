@@ -1,24 +1,38 @@
 <template>
   <div class="d-flex flex-column h-100">
     <div ref="chatbox" class="overflow-auto flex-grow-1">
-      <div style="height: 100px; font-size: 0.9em">
+      <div style="height: 100px; font-size: 0.9em" v-if="messages.length > 0">
         <div class="font-monospace" v-for="(message, i) in messages" :key="i">
           <b>{{ message.username }}> </b>
           {{ message.content }}
         </div>
+      </div>
+      <div
+        v-if="messages.length === 0"
+        class="
+          d-flex
+          justify-content-center
+          align-items-center
+          h-100
+          user-select-none
+        "
+      >
+        <span class="text-uppercase fs-08em" style="color: lightgray">
+          No messages
+        </span>
       </div>
     </div>
     <div class="d-flex pt-3">
       <div class="input-group">
         <input
           type="text"
-          class="form-control"
+          class="form-control first-item-radius"
           v-model="newMessage"
           maxlength="50"
           placeholder="Write a message..."
           @keyup.enter="sendMessage()"
         />
-        <button class="btn btn-primary" @click="sendMessage()">
+        <button class="btn btn-primary last-item-radius" @click="sendMessage()">
           <i class="bi bi-send"></i>
         </button>
       </div>
