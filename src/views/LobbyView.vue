@@ -9,133 +9,164 @@
       justify-content-center
     "
   >
-    <div
-      class="card border-1 border-secondary overflow-auto"
-      style="width: 500px; max-height: 80%"
-    >
-      <div class="card-body">
-        <div class="d-flex flex-row" v-if="joinRoomId">
-          <div class="input-group pe-3 flex-grow-1 position-relative">
-            <input
-              type="text"
-              class="form-control"
-              :class="{ 'is-invalid': invalidUsername }"
-              id="username"
-              v-model="username"
-              placeholder="Choose your username..."
-              maxlength="20"
-              @keyup.enter="joinRoom()"
-            />
-            <div
-              class="invalid-tooltip fs-08em py-0 px-2 rounded-pill"
-              style="top: 70%"
-            >
-              Letters and numbers only
-            </div>
-            <span
-              class="input-group-text"
-              style="max-width: 40%"
-              v-tooltip.bottom="joinRoomId"
-            >
-              <span class="text-truncate">@{{ joinRoomId }}</span>
-            </span>
-            <button
-              class="btn btn-sm btn-secondary"
-              type="button"
-              @click="
-                joinRoomId = null;
-                username = null;
-                $router.push('/lobby');
-              "
-            >
-              <i class="bi bi-x"></i>
-            </button>
-          </div>
-          <button
-            class="btn btn-primary text-uppercase fw-bold text-nowrap"
-            style="font-size: 0.8rem"
-            @click="joinRoom()"
-          >
-            Join room
-          </button>
-        </div>
-        <div class="d-flex flex-row" v-if="!joinRoomId">
-          <div class="pe-3 flex-grow-1 position-relative">
-            <input
-              type="text"
-              class="form-control"
-              :class="{ 'is-invalid': invalidUsername }"
-              id="username"
-              v-model="username"
-              placeholder="Choose your username..."
-              maxlength="20"
-              @keyup.enter="createRoom()"
-            />
-            <div
-              class="invalid-tooltip fs-08em py-0 px-2 rounded-pill"
-              style="top: 70%"
-            >
-              Letters and numbers only
-            </div>
-          </div>
-          <button
-            class="btn btn-dark text-uppercase fw-bold"
-            style="font-size: 0.8rem"
-            @click="createRoom()"
-          >
-            Create new room
-          </button>
-        </div>
-        <ul class="list-group pt-3" v-if="rooms.length > 0">
-          <button
-            class="
-              list-group-item
-              d-flex
-              flex-row
-              justify-content-between
-              align-items-center
-              fw-bold
-              text-uppercase
-            "
-            style="height: 51px; font-size: 0.9em"
-            v-for="room in latestRooms"
-            :key="room.id"
-            @click="loadJoinRoom(room.id)"
-            @mouseover="showRoomOptions = room.id"
-            @mouseleave="showRoomOptions = false"
-          >
-            <div class="text-truncate pe-3">
-              {{ room.username }}
-              <span style="color: lightgray"> @ {{ room.id }}</span>
+    <div class="h-100 d-flex flex-column" style="width: 500px">
+      <div class="h-50"></div>
+      <div class="card border-1 border-secondary mb-3">
+        <div class="card-body">
+          <div class="d-flex flex-row" v-if="joinRoomId">
+            <div class="input-group pe-3 flex-grow-1 position-relative">
+              <input
+                type="text"
+                class="form-control"
+                :class="{ 'is-invalid': invalidUsername }"
+                id="username"
+                v-model="username"
+                placeholder="Choose your username..."
+                maxlength="20"
+                @keyup.enter="joinRoom()"
+              />
+              <div
+                class="invalid-tooltip fs-08em py-0 px-2 rounded-pill"
+                style="top: 70%"
+              >
+                Letters and numbers only
+              </div>
+              <span
+                class="input-group-text"
+                style="max-width: 40%"
+                v-tooltip.bottom="joinRoomId"
+              >
+                <span class="text-truncate">@{{ joinRoomId }}</span>
+              </span>
+              <button
+                class="btn btn-sm btn-dark"
+                type="button"
+                @click="
+                  joinRoomId = null;
+                  username = null;
+                  $router.push('/lobby');
+                "
+              >
+                <i class="bi bi-x"></i>
+              </button>
             </div>
             <button
-              class="btn btn-sm btn-outline-danger rounded-circle"
-              :class="{ 'btn-danger': deleteItem === room.id }"
-              type="button"
-              v-if="showRoomOptions === room.id || deleteItem === room.id"
-              @click.prevent="removeRoom(room.id)"
+              class="btn btn-primary text-uppercase fw-bold text-nowrap"
+              style="font-size: 0.8rem"
+              @click="joinRoom()"
             >
-              <i class="bi bi-trash2-fill"></i>
+              Join room
             </button>
-          </button>
-          <a
-            class="
-              list-group-item
-              bg-dark
-              text-white
-              fw-bold
-              text-uppercase
-              d-flex
-              justify-content-center
-              p-0
-            "
-            style="font-size: 0.8em; cursor: pointer"
-            v-if="!showAllRooms && rooms.length > 5"
-            @click="showAllRooms = true"
+          </div>
+          <div class="d-flex flex-row" v-if="!joinRoomId">
+            <div class="pe-3 flex-grow-1 position-relative">
+              <input
+                type="text"
+                class="form-control"
+                :class="{ 'is-invalid': invalidUsername }"
+                id="username"
+                v-model="username"
+                placeholder="Choose your username..."
+                maxlength="20"
+                @keyup.enter="createRoom()"
+              />
+              <div
+                class="invalid-tooltip fs-08em py-0 px-2 rounded-pill"
+                style="top: 70%"
+              >
+                Letters and numbers only
+              </div>
+            </div>
+            <button
+              class="btn btn-dark text-uppercase fw-bold"
+              style="font-size: 0.8rem"
+              @click="createRoom()"
+            >
+              Create new room
+            </button>
+          </div>
+          <div
+            class="overflow-auto flex-grow-1 mt-3"
+            style="max-height: 200px"
+            v-if="rooms.length > 0"
           >
-            Show all ({{ rooms.length - 5 }})
-          </a>
-        </ul>
+            <ul class="list-group">
+              <button
+                class="
+                  list-group-item
+                  d-flex
+                  flex-row
+                  justify-content-between
+                  align-items-center
+                  fw-bold
+                  text-uppercase
+                "
+                style="height: 51px; font-size: 0.9em"
+                v-for="room in latestRooms"
+                :key="room.id"
+                @click="loadJoinRoom(room.id)"
+                @mouseover="showRoomOptions = room.id"
+                @mouseleave="
+                  showRoomOptions = false;
+                  displayCopyToast = false;
+                "
+              >
+                <div class="text-truncate pe-3">
+                  {{ room.username }}
+                  <span style="color: lightgray"> @ {{ room.id }}</span>
+                </div>
+                <div>
+                  <button
+                    class="btn btn-sm btn-outline-danger rounded-circle me-2"
+                    :class="{
+                      'btn-danger text-white': deleteItem === room.id,
+                    }"
+                    type="button"
+                    v-if="showRoomOptions === room.id || deleteItem === room.id"
+                    @click.stop="removeRoom(room.id)"
+                  >
+                    <i class="bi bi-trash2-fill"></i>
+                  </button>
+                  <button
+                    class="btn btn-sm btn-outline-dark rounded-circle"
+                    type="button"
+                    v-if="showRoomOptions === room.id || deleteItem === room.id"
+                    @click.stop="copyRoomLink(room.id)"
+                  >
+                    <i class="bi bi-link-45deg"></i>
+                  </button>
+                </div>
+                <span
+                  class="badge bg-dark"
+                  style="position: fixed; right: 55px"
+                  :class="
+                    displayCopyToast === room.id ? 'd-inline-block' : 'd-none'
+                  "
+                >
+                  <i class="bi bi-check-circle-fill me-1"></i>
+                  Copied
+                </span>
+              </button>
+              <a
+                class="
+                  list-group-item
+                  bg-dark
+                  text-white
+                  fw-bold
+                  text-uppercase
+                  d-flex
+                  justify-content-center
+                  p-0
+                "
+                style="font-size: 0.8em; cursor: pointer"
+                v-if="!showAllRooms && rooms.length > 5"
+                @click="showAllRooms = true"
+              >
+                Show all ({{ rooms.length - 5 }})
+              </a>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -157,6 +188,7 @@ export default {
     deleteItem: false,
     discardDeleteTimeout: null,
     showAllRooms: false,
+    displayCopyToast: false,
   }),
   computed: {
     invalidUsername() {
@@ -231,6 +263,14 @@ export default {
         this.deleteItem = false;
       }, 5000);
     },
+    copyRoomLink(roomId) {
+      navigator.clipboard.writeText(`${location.origin}/room/${roomId}`);
+
+      this.displayCopyToast = roomId;
+      setTimeout(() => {
+        this.displayCopyToast = false;
+      }, 1000);
+    },
   },
 };
 </script>
@@ -239,6 +279,7 @@ export default {
 .custom-bg {
   background-image: url("http://static.colourlovers.com/images/patterns/4077/4077687.png?1389270438");
 }
+
 .list-group-item:hover {
   background-color: snow;
 }
