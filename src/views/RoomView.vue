@@ -229,6 +229,16 @@
                 <i class="bi bi-backspace-fill fs-08em"></i>
               </button>
             </div>
+            <div
+              class="w-100 text-end"
+              style="font-size: 0.5em"
+              v-if="background.type === 'youtube'"
+            >
+              <i class="bi bi-exclamation-triangle">
+                If you experience problems loading YouTube backgrounds, try
+                enabling your browser's autoplay.
+              </i>
+            </div>
             <div class="fw-bold pt-3 pb-1">Colors</div>
             <div class="btn-group border rounded w-100">
               <button
@@ -304,7 +314,7 @@
                 v-for="(video, i) in backgrounds.youtube"
                 :key="i"
                 type="button"
-                class="btn btn-sm"
+                class="btn btn-sm px-0"
                 :style="{
                   backgroundImage: 'url(' + video.thumbnail + ')',
                   backgroundPosition: 'center',
@@ -384,8 +394,8 @@ export default {
     computedBackground: {
       handler(newVal, oldVal) {
         if (
-          (newVal.type === "youtube" && oldVal.type !== "youtube") ||
-          (newVal.type === "youtube" && newVal.value !== oldVal.value)
+          newVal.type === "youtube" &&
+          (oldVal.type !== "youtube" || newVal.value !== oldVal.value)
         ) {
           this.youtubeId = getYouTubeID(newVal.value);
           this.$nextTick(() => {
@@ -398,16 +408,11 @@ export default {
               },
             });
           });
+        } else if (newVal.sound !== oldVal.sound) {
+          newVal.sound
+            ? this.youtubePlayer.unMute()
+            : this.youtubePlayer.mute();
         }
-
-        this.$nextTick(() => {
-          // nextTick() because youtubeId might have been changed
-          if (this.youtubePlayer) {
-            newVal.sound
-              ? this.youtubePlayer.unMute()
-              : this.youtubePlayer.mute();
-          }
-        });
 
         this.roomSync.set("background", newVal);
       },
