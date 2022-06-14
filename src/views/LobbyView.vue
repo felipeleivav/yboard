@@ -138,7 +138,7 @@
                 </div>
                 <span
                   class="badge bg-dark"
-                  style="position: fixed; right: 55px"
+                  style="position: absolute; right: 60px"
                   :class="
                     displayCopyToast === room.id ? 'd-inline-block' : 'd-none'
                   "

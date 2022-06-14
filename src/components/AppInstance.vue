@@ -62,8 +62,8 @@
 </template>
 
 <script>
-import * as _ from "lodash";
 import $ from "jquery";
+import * as _ from "lodash";
 import "jquery-ui/ui/widgets/draggable";
 import "jquery-ui/ui/widgets/resizable";
 import "jquery-ui/themes/base/draggable.css";

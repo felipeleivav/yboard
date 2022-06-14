@@ -80,7 +80,7 @@ export default {
   watch: {
     checkedTasks(newVal) {
       const iconBtn = newVal
-        ? [{ icon: "trash", callback: this.clearDoneTasks }]
+        ? [{ icon: "trash2", callback: this.clearDoneTasks }]
         : [];
       this.$emit("setHeaderButtons", iconBtn);
     },

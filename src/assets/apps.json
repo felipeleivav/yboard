@@ -60,5 +60,14 @@
     "height": 380,
     "minWidth": 250,
     "minHeight": 250
+  },
+  {
+    "component": "DrawApp",
+    "title": "draw",
+    "icon": "easel",
+    "width": 400,
+    "height": 300,
+    "minWidth": 300,
+    "minHeight": 300
   }
 ]

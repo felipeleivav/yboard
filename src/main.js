@@ -20,6 +20,7 @@ import TimerApp from "@/components/apps/TimerApp";
 import LinksApp from "@/components/apps/LinksApp";
 import NotesApp from "@/components/apps/NotesApp";
 import SpotifyApp from "@/components/apps/SpotifyApp";
+import DrawApp from "@/components/apps/DrawApp";
 Vue.component("TodoApp", TodoApp);
 Vue.component("KanbanApp", KanbanApp);
 Vue.component("ChatApp", ChatApp);
@@ -27,6 +28,7 @@ Vue.component("TimerApp", TimerApp);
 Vue.component("LinksApp", LinksApp);
 Vue.component("NotesApp", NotesApp);
 Vue.component("SpotifyApp", SpotifyApp);
+Vue.component("DrawApp", DrawApp);
 
 new Vue({
   router,

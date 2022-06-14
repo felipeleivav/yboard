@@ -6,7 +6,7 @@
         allowfullscreen="1"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         title="YouTube Playback"
-        :src="`https://www.youtube.com/embed/${youtubeId}?autoplay=1&amp;controls=0&amp;start=10&amp;playsinline=1&amp;showinfo=0&amp;rel=0&amp;iv_load_policy=3&amp;modestbranding=1&amp;loop=1&amp;enablejsapi=1&amp;widgetid=1`"
+        :src="`https://www.youtube.com/embed/${youtubeId}?autoplay=1&amp;controls=0&amp;start=0&amp;playsinline=1&amp;showinfo=0&amp;rel=0&amp;iv_load_policy=3&amp;modestbranding=1&amp;loop=1&amp;enablejsapi=1&amp;widgetid=1`"
         width="100%"
         height="100%"
         frameborder="0"
@@ -230,7 +230,7 @@
               </button>
             </div>
             <div
-              class="w-100 text-end"
+              class="w-100 text-end pt-1"
               style="font-size: 0.5em"
               v-if="background.type === 'youtube'"
             >
@@ -408,7 +408,7 @@ export default {
               },
             });
           });
-        } else if (newVal.sound !== oldVal.sound) {
+        } else if (newVal.sound !== oldVal.sound && this.youtubePlayer) {
           newVal.sound
             ? this.youtubePlayer.unMute()
             : this.youtubePlayer.mute();

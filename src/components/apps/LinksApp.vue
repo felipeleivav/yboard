@@ -69,7 +69,7 @@
                 @click.stop="deleteFolder(i)"
                 :class="{ 'btn-danger': deleteItem === i }"
               >
-                <i class="bi bi-trash3"></i>
+                <i class="bi bi-trash2"></i>
               </button>
               <div v-if="folder.links.length > 0" class="vr m-2" />
               <button
@@ -172,7 +172,7 @@
                   :class="{ 'btn-danger': deleteItem === `${i}-${j}` }"
                   @click.stop="deleteLink(i, j)"
                 >
-                  <i class="bi bi-trash3"></i>
+                  <i class="bi bi-trash2"></i>
                 </button>
               </div>
             </li>

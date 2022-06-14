@@ -72,7 +72,7 @@
               @click="deleteAColumn(i)"
               :class="{ 'btn-danger': deleteItem === i }"
             >
-              <i class="bi bi-trash3" />
+              <i class="bi bi-trash2" />
             </button>
           </div>
         </div>
@@ -144,7 +144,7 @@
                 :class="{ 'btn-danger': deleteItem === `${i}-${j}` }"
                 @click="deleteAnItem(i, j)"
               >
-                <i class="bi bi-trash3" />
+                <i class="bi bi-trash2" />
               </button>
             </div>
           </li>

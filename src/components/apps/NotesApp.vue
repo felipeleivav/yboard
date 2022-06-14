@@ -58,7 +58,7 @@
               'text-white': editingNote === note,
             }"
           >
-            <i class="bi bi-trash3"></i>
+            <i class="bi bi-trash2"></i>
           </button>
         </button>
       </div>

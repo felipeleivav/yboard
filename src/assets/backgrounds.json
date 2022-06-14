@@ -23,7 +23,8 @@
     "http://static.colourlovers.com/images/patterns/2411/2411304.png",
     "http://static.colourlovers.com/images/patterns/2142/2142956.png",
     "http://static.colourlovers.com/images/patterns/929/929400.png",
-    "http://static.colourlovers.com/images/patterns/574/574030.png"
+    "http://static.colourlovers.com/images/patterns/574/574030.png",
+    "http://static.colourlovers.com/images/patterns/2456/2456046.png"
   ],
   "youtube": [
     {
@@ -37,14 +38,29 @@
       "live": true
     },
     {
-      "url": "https://www.youtube.com/watch?v=xgirCNccI68",
-      "thumbnail": "https://img.youtube.com/vi/xgirCNccI68/sddefault.jpg",
-      "live": true
-    },
-    {
       "url": "https://www.youtube.com/watch?v=DWcJFNfaw9c",
       "thumbnail": "https://img.youtube.com/vi/DWcJFNfaw9c/mqdefault.jpg",
       "live": true
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=qMwzWk81tVM",
+      "thumbnail": "https://img.youtube.com/vi/qMwzWk81tVM/mqdefault.jpg",
+      "live": false
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=bz5q5gl2uZA",
+      "thumbnail": "https://img.youtube.com/vi/bz5q5gl2uZA/mqdefault.jpg",
+      "live": false
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=CfPxlb8-ZQ0",
+      "thumbnail": "https://img.youtube.com/vi/CfPxlb8-ZQ0/mqdefault.jpg",
+      "live": false
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=TGan48YE9Us",
+      "thumbnail": "https://img.youtube.com/vi/TGan48YE9Us/mqdefault.jpg",
+      "live": false
     },
     {
       "url": "https://www.youtube.com/watch?v=5wRWniH7rt8",
@@ -57,23 +73,8 @@
       "live": false
     },
     {
-      "url": "https://www.youtube.com/watch?v=4q4vpQCIZ6w",
-      "thumbnail": "https://img.youtube.com/vi/4q4vpQCIZ6w/mqdefault.jpg",
-      "live": false
-    },
-    {
       "url": "https://www.youtube.com/watch?v=A2_yg19Pu7Y",
       "thumbnail": "https://i.ytimg.com/vi/A2_yg19Pu7Y/mqdefault.jpg",
-      "live": false
-    },
-    {
-      "url": "https://www.youtube.com/watch?v=CfPxlb8-ZQ0",
-      "thumbnail": "https://img.youtube.com/vi/CfPxlb8-ZQ0/mqdefault.jpg",
-      "live": false
-    },
-    {
-      "url": "https://www.youtube.com/watch?v=TGan48YE9Us",
-      "thumbnail": "https://img.youtube.com/vi/TGan48YE9Us/mqdefault.jpg",
       "live": false
     }
   ]
