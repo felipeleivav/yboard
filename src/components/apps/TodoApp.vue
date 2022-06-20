@@ -1,28 +1,27 @@
 <template>
   <div class="d-flex flex-column h-100">
-    <div class="overflow-auto flex-grow-1">
-      <draggable
-        tag="ul"
-        class="list-group"
-        animation="200"
-        @change="draggableChange()"
-        v-model="tasks"
+    <draggable
+      tag="ul"
+      class="list-group overflow-auto flex-grow-1"
+      animation="200"
+      group="tasks"
+      @change="draggableChange()"
+      v-model="tasks"
+    >
+      <li
+        v-for="(task, i) in tasks"
+        :key="i"
+        :id="`task-${i}`"
+        class="list-group-item d-flex flex-row align-items-center"
+        @click="toggleTaskState(task)"
       >
-        <li
-          v-for="(task, i) in tasks"
-          :key="i"
-          :id="`task-${i}`"
-          class="list-group-item d-flex flex-row align-items-center"
-          @click="toggleTaskState(task)"
-        >
-          <input
-            class="form-check-input me-1 me-2 flex-shrink-0"
-            type="checkbox"
-            :checked="task.done"
-          />
-          <span :class="{ 'task-done': task.done }">{{ task.name }}</span>
-        </li>
-      </draggable>
+        <input
+          class="form-check-input me-1 me-2 flex-shrink-0"
+          type="checkbox"
+          :checked="task.done"
+        />
+        <span :class="{ 'task-done': task.done }">{{ task.name }}</span>
+      </li>
       <div
         v-if="tasks.length === 0"
         class="
@@ -37,7 +36,7 @@
           No tasks
         </span>
       </div>
-    </div>
+    </draggable>
     <div class="d-flex pt-3">
       <div class="input-group">
         <input

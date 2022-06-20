@@ -239,7 +239,25 @@
                 enabling your browser's autoplay.
               </i>
             </div>
-            <div class="fw-bold pt-3 pb-1">Colors</div>
+            <div
+              class="
+                d-flex
+                flex-row
+                justify-content-between
+                align-items-center
+                pt-3
+                pb-1
+              "
+            >
+              <div class="fw-bold">Colors</div>
+              <a
+                href="https://www.colourlovers.com/colors"
+                target="_blank"
+                class="primary-link fs-08em"
+              >
+                Search more <i class="bi bi-box-arrow-up-right fs-08em"></i>
+              </a>
+            </div>
             <div class="btn-group border rounded w-100">
               <button
                 v-for="(color, i) in backgrounds.colors"
