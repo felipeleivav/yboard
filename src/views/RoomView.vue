@@ -369,7 +369,7 @@ import YjsService from "@/services/YjsService";
 const DEFAULT_DESC = "Room's description";
 const DEFAULT_BG = {
   type: "color",
-  value: backgrounds.colors[_.random(backgrounds.colors.length - 1)],
+  value: "#222244",
   sound: true,
   stretch: false,
 };

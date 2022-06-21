@@ -10,8 +10,8 @@
     "
   >
     <div class="h-100 d-flex flex-column" style="width: 500px">
-      <div class="h-50"></div>
-      <div class="card border-1 border-secondary mb-3">
+      <div class="h-25"></div>
+      <div class="card border-1 border-info mb-3">
         <div class="card-body">
           <div class="d-flex flex-row" v-if="joinRoomId">
             <div class="input-group pe-3 flex-grow-1 position-relative">
@@ -168,6 +168,16 @@
           </div>
         </div>
       </div>
+      <div class="text-center text-white">
+        created with <i class="bi bi-heart"></i> by
+        <a
+          href="https://github.com/felipeleivav/yboard"
+          target="_blank"
+          class="link-info"
+        >
+          felipe
+        </a>
+      </div>
     </div>
   </div>
 </template>
@@ -277,7 +287,7 @@ export default {
 
 <style scoped>
 .custom-bg {
-  background-image: url("http://static.colourlovers.com/images/patterns/4077/4077687.png?1389270438");
+  background: #222244;
 }
 
 .list-group-item:hover {
