@@ -16,10 +16,11 @@ Yboard is a frontend-only project. Only requisite is a [websocket server](https:
 
 This means a couple of things:
 
-- There is no authentication mechanisms nor additional backend logic
+- Yboard directly connects to websocket server
+
+- There is no authentication mechanisms nor additional backend logic implemented
 - All the rooms are publicly accessible (only protected by a random unique id, thanks [nanoid](https://github.com/ai/nanoid))
 - Since a room is basically a [shared document](https://docs.yjs.dev/api/y.doc), any user could eventually rewrite the whole document by writing their own client application
-- Yboard is supposed to be the simplest thing
 
 So please don't use YBoard for highly sensitive data or production environments.
 
@@ -27,7 +28,7 @@ This is experimental software, use it for fun and collaboration with your friend
 
 ## 🎁 What's inside?
 
-Yboard consists of a set of minimalistic applications where multiple users can interact in real time.
+Yboard consists of a set of minimalist applications where multiple users can interact in real time:
 
 - **TODO** - task manager
 - **NOTES** - notes manager
@@ -38,7 +39,7 @@ Yboard consists of a set of minimalistic applications where multiple users can i
 - **SPOTIFY** - embedded spotify player w/ synchronized playlists
 - **DRAW** - a drawable whiteboard
 
-## 🖥 Set up environment
+## 🖥 Set up local environment
 
 ```sh
 # clone & setup project
