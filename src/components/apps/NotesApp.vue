@@ -71,7 +71,7 @@
         <i class="bi bi-plus" />
       </button>
     </div>
-    <div :style="{ width: showNotes ? '65%' : '100%' }">
+    <div class="w-100">
       <div v-show="editingNote" class="h-100">
         <div id="note-editor" class="border-0"></div>
       </div>
